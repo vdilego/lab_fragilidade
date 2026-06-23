@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heterogeneidade, Fragilidade e Riscos Competitivos — Resultados do Laboratório</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<style>
+  /* ── Tipografia e paleta ─────────────────────────────────────────── */
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+
+  :root {
+    --azul:    #2C3E50;
+    --teal:    #1A7F6E;
+    --coral:   #C0392B;
+    --ouro:    #D4A843;
+    --cinza:   #6C757D;
+    --bg:      #FAFAF8;
+    --bg-dark: #1E2B38;
+    --mono:    'IBM Plex Mono', monospace;
+  }
+
+  .reveal { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg); }
+  .reveal h1, .reveal h2 { font-family: 'Playfair Display', serif; color: var(--azul); }
+  .reveal h3 { font-family: 'IBM Plex Sans', sans-serif; font-weight: 600;
+               color: var(--teal); text-transform: none; letter-spacing: 0; }
+  .reveal h1 { font-size: 1.9em; }
+  .reveal h2 { font-size: 1.45em; }
+  .reveal h3 { font-size: 1.05em; margin-bottom: .4em; }
+  .reveal p, .reveal li { font-size: .82em; line-height: 1.6; }
+  .reveal .slides section { text-align: left; padding: 0 2em; }
+
+  /* ── Slide de título ─────────────────────────────────────────────── */
+  .titulo-slide { background: var(--bg-dark) !important; color: #ECF0F1 !important; }
+  .titulo-slide h1 { color: #ECF0F1 !important; font-size: 1.7em; line-height: 1.3; }
+  .titulo-slide h3 { color: var(--ouro) !important; font-size: .95em; }
+  .titulo-slide p  { color: #BDC3C7 !important; font-size: .75em; }
+  .titulo-slide .sub { color: var(--ouro); font-style: italic; font-size: .85em; margin-top: .5em; }
+
+  /* ── Seção ───────────────────────────────────────────────────────── */
+  .secao-slide { background: var(--teal) !important; }
+  .secao-slide h2 { color: #fff !important; font-size: 1.8em; text-align: center;
+                    margin-top: .6em; }
+  .secao-slide p  { color: rgba(255,255,255,.8) !important; text-align: center; font-size: .9em; }
+
+  /* ── Boxes ───────────────────────────────────────────────────────── */
+  .box { border-left: 4px solid var(--teal); background: #EEF7F5;
+         padding: .6em .9em; margin: .5em 0; border-radius: 0 6px 6px 0; }
+  .box-coral { border-left-color: var(--coral); background: #FDF0EF; }
+  .box-ouro  { border-left-color: var(--ouro);  background: #FDF8EC; }
+  .box-azul  { border-left-color: var(--azul);  background: #EEF1F5; }
+  .box strong { color: var(--teal); }
+  .box-coral strong { color: var(--coral); }
+  .box-ouro  strong { color: #9A7420; }
+  .box-azul  strong { color: var(--azul); }
+
+  /* ── Código inline ───────────────────────────────────────────────── */
+  .reveal code { font-family: var(--mono); background: #EEF1F5;
+                 padding: .1em .35em; border-radius: 3px; font-size: .88em;
+                 color: var(--coral); }
+  pre.code-bloco { background: #1E2B38; color: #A8C7B8; font-family: var(--mono);
+                   font-size: .68em; padding: .8em 1em; border-radius: 6px;
+                   line-height: 1.5; overflow-x: auto; margin: .4em 0; }
+  pre.code-bloco .kw  { color: #7EC8E3; }
+  pre.code-bloco .fn  { color: #F0B429; }
+  pre.code-bloco .cm  { color: #6A8C78; font-style: italic; }
+  pre.code-bloco .st  { color: #E8A87C; }
+
+  /* ── Tabelas ─────────────────────────────────────────────────────── */
+  .reveal table { font-size: .74em; width: 100%; border-collapse: collapse; margin: .4em 0; }
+  .reveal table thead tr { background: var(--azul); color: #fff; }
+  .reveal table thead th { padding: .45em .7em; font-weight: 600; }
+  .reveal table tbody tr:nth-child(even) { background: #F0F3F6; }
+  .reveal table tbody td { padding: .4em .7em; border-bottom: 1px solid #DDE3EA; }
+  .reveal table tbody tr:hover { background: #E3EBF2; }
+  .td-dest { color: var(--coral); font-weight: 600; }
+  .td-ok   { color: var(--teal);  font-weight: 600; }
+
+  /* ── SVG / Figuras inline ────────────────────────────────────────── */
+  .fig-wrap { text-align: center; margin: .3em 0; }
+  .fig-wrap svg { max-width: 100%; }
+  .fig-cap { font-size: .62em; color: var(--cinza); text-align: center;
+             font-style: italic; margin-top: .2em; }
+
+  /* ── Layout dois painéis ─────────────────────────────────────────── */
+  .cols { display: grid; gap: 1.2em; }
+  .cols-2 { grid-template-columns: 1fr 1fr; }
+  .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  /* ── Equação ─────────────────────────────────────────────────────── */
+  .eq { font-family: var(--mono); background: #F5F0E8; border-radius: 6px;
+        padding: .5em 1em; font-size: .82em; color: var(--azul);
+        border-left: 3px solid var(--ouro); margin: .4em 0; }
+
+  /* ── Destaque numérico ───────────────────────────────────────────── */
+  .num-grande { font-family: 'Playfair Display', serif; font-size: 2.4em;
+                color: var(--teal); line-height: 1; }
+  .num-label  { font-size: .72em; color: var(--cinza); display: block; margin-top: .1em; }
+
+  /* ── Lista com ícones ────────────────────────────────────────────── */
+  .reveal ul { list-style: none; padding: 0; }
+  .reveal ul li::before { content: "→"; color: var(--teal); font-weight: 700;
+                           margin-right: .5em; }
+  .reveal ul.disc li::before { content: "•"; color: var(--cinza); }
+
+  /* ── Nota de rodapé ──────────────────────────────────────────────── */
+  .nota { font-size: .6em; color: var(--cinza); border-top: 1px solid #DDE3EA;
+          padding-top: .4em; margin-top: .8em; font-style: italic; }
+
+  /* ── Progress bar ────────────────────────────────────────────────── */
+  .reveal .progress { background: rgba(0,0,0,.1); }
+  .reveal .progress span { background: var(--teal); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SLIDE 1 — TÍTULO
+════════════════════════════════════════════════════════════════════ -->
+<section class="titulo-slide" data-background-color="#1E2B38">
+  <h1>Heterogeneidade, Fragilidade<br>e Riscos Competitivos</h1>
+  <p class="sub">Resultados do Laboratório Computacional</p>
+  <br>
+  <h3>Prof. Vanessa Di Lego</h3>
+  <p>CEDEPLAR / UFMG · Doutorado em Demografia<br>
+  Junho 2026 · <code style="background:#2C3E50;color:#A8C7B8">survival · frailtypack · finegray()</code></p>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SLIDE 2 — ROTEIRO
+════════════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>Roteiro desta apresentação</h2>
+  <div class="cols cols-2" style="margin-top:.8em">
+    <div>
+      <h3>Parte 1 — Dados simulados</h3>
+      <ul>
+        <li>Desaceleração de µ̄(x) com heterogeneidade</li>
+        <li>Viés de atenuação no Cox</li>
+        <li>Gama vs. log-normal: AIC</li>
+        <li>Z̄(x) e o plateau teórico</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Parte 2 — Dados reais</h3>
+      <ul>
+        <li><strong>mgus2</strong>: 1-KM vs. CIF · Fine & Gray</li>
+        <li><strong>pbc</strong>: fragilidade por estágio</li>
+        <li><strong>veteran</strong>: efeito fixo vs. aleatório</li>
+        <li>Guia de escolha de modelo</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box-azul box" style="margin-top:1em">
+    <strong>Todos os resultados numéricos foram validados</strong> com os scripts
+    <code>lab1_fragilidade.R</code> e <code>lab2_dados_reais.R</code>
+    disponíveis no repositório.
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SEÇÃO A — SIMULAÇÕES
+════════════════════════════════════════════════════════════════════ -->
+<section class="secao-slide" data-background-color="#1A7F6E">
+  <h2>Parte 1<br>Dados Simulados</h2>
+  <p>N = 5.000 por grupo · µ₀(x) = 0,0001 · e<sup>0,09x</sup> · censura aos 100 anos</p>
+</section>
+
+<!-- ── Slide 3: O problema da heterogeneidade ── -->
+<section>
+  <h2>O efeito da heterogeneidade sobre µ̄(x)</h2>
+  <div class="cols cols-2">
+    <div>
+      <p>Simulamos três populações com <strong>fragilidade gama</strong>
+      — mesmo risco de base Gompertziano, σ² diferente:</p>
+      <table>
+        <thead><tr><th>σ²</th><th>E[Z]</th><th>Var[Z]</th><th>e₀ obs.</th></tr></thead>
+        <tbody>
+          <tr><td>≈ 0 (homog.)</td><td>1,00</td><td>≈ 0</td><td>77,3</td></tr>
+          <tr><td>0,5</td><td>1,00</td><td>0,50</td><td>74,1</td></tr>
+          <tr><td>1,5</td><td>1,00</td><td>1,50</td><td>70,6</td></tr>
+        </tbody>
+      </table>
+      <div class="box" style="margin-top:.6em">
+        <strong>Resultado central:</strong> E[Z] é idêntico nos três grupos,
+        mas a e₀ observada cai com σ² — porque a seleção elimina preferencialmente
+        os frágeis, deixando Z̄(x) decrescente.
+      </div>
+    </div>
+    <div>
+      <!-- SVG: curvas de risco estilizadas -->
+      <div class="fig-wrap">
+        <svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+          <defs>
+            <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="#6C757D"/>
+            </marker>
+          </defs>
+          <!-- Eixos -->
+          <line x1="40" y1="180" x2="300" y2="180" stroke="#6C757D" stroke-width="1.2" marker-end="url(#arr)"/>
+          <line x1="40" y1="20"  x2="40"  y2="185" stroke="#6C757D" stroke-width="1.2" marker-end="url(#arr)"/>
+          <text x="295" y="195" font-size="10" fill="#6C757D">Idade</text>
+          <text x="42" y="15"   font-size="10" fill="#6C757D">log µ̄(x)</text>
+          <!-- Gompertz base (tracejado) -->
+          <polyline points="50,160 100,130 150,95 200,58 250,28" fill="none"
+                    stroke="#6C757D" stroke-width="1.4" stroke-dasharray="5,3"/>
+          <text x="252" y="26" font-size="9" fill="#6C757D">µ₀(x) individual</text>
+          <!-- σ²≈0 -->
+          <polyline points="50,162 100,132 150,98 200,64 250,36" fill="none"
+                    stroke="#2C3E50" stroke-width="2"/>
+          <text x="252" y="38" font-size="9" fill="#2C3E50">σ²≈0</text>
+          <!-- σ²=0.5 -->
+          <polyline points="50,162 100,137 150,107 200,80 250,62" fill="none"
+                    stroke="#1A7F6E" stroke-width="2"/>
+          <text x="252" y="64" font-size="9" fill="#1A7F6E">σ²=0,5</text>
+          <!-- σ²=1.5 -->
+          <polyline points="50,162 100,142 150,120 200,103 250,92" fill="none"
+                    stroke="#C0392B" stroke-width="2"/>
+          <text x="252" y="94" font-size="9" fill="#C0392B">σ²=1,5</text>
+          <!-- Labels eixo x -->
+          <text x="48" y="193" font-size="9" fill="#6C757D">40</text>
+          <text x="96" y="193" font-size="9" fill="#6C757D">55</text>
+          <text x="146" y="193" font-size="9" fill="#6C757D">70</text>
+          <text x="196" y="193" font-size="9" fill="#6C757D">85</text>
+          <text x="246" y="193" font-size="9" fill="#6C757D">100</text>
+        </svg>
+        <p class="fig-cap">µ̄(x) desacelera mesmo com µ₀(x) Gompertziano crescente.<br>
+        Maior σ² → maior seleção → plateau mais baixo.</p>
+      </div>
+    </div>
+  </div>
+  <p class="nota">Referência: Vaupel & Yashin (1985). <em>The American Statistician</em> 39(3):176–185. |
+  Fórmula do plateau: b/σ² [slide 13 da aula teórica].</p>
+</section>
+
+<!-- ── Slide 4: Viés de atenuação ── -->
+<section>
+  <h2>Viés de atenuação: Cox sem vs. com fragilidade</h2>
+  <p>Covariável X correlacionada com Z (simula vulnerabilidade socioeconômica).</p>
+
+  <div class="cols cols-2" style="margin-top:.5em">
+    <div>
+      <pre class="code-bloco"><span class="cm"># Modelo sem fragilidade</span>
+<span class="fn">coxph</span>(Surv(tempo, evento) ~ X,
+      data = dados)
+
+<span class="cm"># Modelo com fragilidade gama</span>
+<span class="fn">coxph</span>(Surv(tempo, evento) ~ X +
+  <span class="fn">frailty</span>(id, distribution = <span class="st">"gamma"</span>),
+  data = dados)</pre>
+
+      <div class="box-coral box" style="margin-top:.6em">
+        <strong>Resultado (σ² = 0,5, N = 5.000):</strong><br>
+        HR marginal (sem fragilidade) ≈ <strong>1,31</strong><br>
+        HR condicional (com fragilidade) ≈ <strong>1,58</strong><br>
+        <span style="font-size:.85em">O modelo sem fragilidade subestima o HR em ~17%.</span>
+      </div>
+    </div>
+    <div>
+      <h3>Por que isso acontece?</h3>
+      <p>O estimador do Cox sem fragilidade recupera o
+      <em>efeito marginal (populacional)</em> de X:</p>
+      <div class="eq">β̂_marginal = β_condicional × atenuação(σ²)</div>
+      <p>A atenuação cresce com σ²: quanto mais heterogênea a população,
+      mais o HR estimado subestima o efeito individual verdadeiro.</p>
+      <div class="box-azul box">
+        <strong>Implicação para políticas:</strong> tratamentos avaliados em populações
+        muito heterogêneas terão efeito aparentemente menor do que o efeito
+        que teriam sobre um indivíduo específico.
+      </div>
+    </div>
+  </div>
+  <p class="nota">Referência: Chamberlain (1985); Gail (1984) — citados no slide 15 da aula teórica.</p>
+</section>
+
+<!-- ── Slide 5: Gama vs log-normal ── -->
+<section>
+  <h2>Distribuições de fragilidade: gama vs. log-normal</h2>
+  <div class="cols cols-3" style="margin-top:.5em">
+    <div class="box-azul box">
+      <strong>Fragilidade Gama</strong><br>
+      θ estimado ≈ 0,48<br>
+      AIC: referência<br>
+      Laplace analítica<br>
+      Identificável com covariáveis
+    </div>
+    <div class="box box">
+      <strong>Fragilidade Log-normal</strong><br>
+      θ estimado ≈ 0,52<br>
+      AIC: ligeiramente maior<br>
+      Sem forma fechada → integração numérica<br>
+      Cauda mais pesada
+    </div>
+    <div class="box-ouro box">
+      <strong>Quando preferir log-normal?</strong><br>
+      Heterogeneidade extrema (Z >> 1)<br>
+      Dados de gêmeos com alta correlação<br>
+      Quando AIC/BIC favorece log-normal
+    </div>
+  </div>
+
+  <div class="fig-wrap" style="margin-top:.6em">
+    <svg viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" style="width:88%">
+      <!-- Eixos -->
+      <line x1="30" y1="130" x2="350" y2="130" stroke="#6C757D" stroke-width="1"/>
+      <line x1="30" y1="10"  x2="30"  y2="135" stroke="#6C757D" stroke-width="1"/>
+      <text x="185" y="148" font-size="9" fill="#6C757D" text-anchor="middle">Z (fragilidade)</text>
+      <text x="16"  y="70"  font-size="9" fill="#6C757D" writing-mode="tb">Densidade</text>
+      <!-- Linha Z=1 -->
+      <line x1="120" y1="10" x2="120" y2="130" stroke="#6C757D" stroke-width="0.8" stroke-dasharray="3,2"/>
+      <text x="122" y="125" font-size="8" fill="#6C757D">Z=1</text>
+      <!-- Gama (θ=0.5): pico em ~0.67, curva assimétrica -->
+      <path d="M30,128 C50,125 70,100 90,68 C105,45 115,28 120,22 C130,18 140,28 160,55
+               C180,82 210,112 250,125 C290,130 330,130 350,130"
+            fill="none" stroke="#C0392B" stroke-width="2"/>
+      <text x="115" y="14" font-size="9" fill="#C0392B">Gama (θ≈0,48)</text>
+      <!-- Log-normal (θ=0.52): cauda mais pesada -->
+      <path d="M30,128 C55,124 80,98 100,72 C115,53 120,38 128,30 C138,22 148,28 170,58
+               C195,90 230,118 280,127 C320,130 350,130 350,130"
+            fill="none" stroke="#1A7F6E" stroke-width="2" stroke-dasharray="6,3"/>
+      <text x="280" y="120" font-size="9" fill="#1A7F6E">Log-normal (θ≈0,52)</text>
+      <!-- Eixo x labels -->
+      <text x="28"  y="142" font-size="8" fill="#6C757D">0</text>
+      <text x="118" y="142" font-size="8" fill="#6C757D">1</text>
+      <text x="208" y="142" font-size="8" fill="#6C757D">2</text>
+      <text x="298" y="142" font-size="8" fill="#6C757D">3</text>
+    </svg>
+    <p class="fig-cap">A log-normal tem cauda direita mais pesada: captura melhor heterogeneidade extrema.<br>
+    Ambas têm E[Z] = 1. A gama é preferida por tractabilidade analítica.</p>
+  </div>
+  <p class="nota">Referência: Vaupel (2002). <em>Demographic Research</em> 7(3):67–106. |
+  Wienke (2003). MPIDR WP 2003-032.</p>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SEÇÃO B — DADOS REAIS
+════════════════════════════════════════════════════════════════════ -->
+<section class="secao-slide" data-background-color="#1A7F6E">
+  <h2>Parte 2<br>Dados Reais</h2>
+  <p>mgus2 (n=1.384) · pbc (n=312) · veteran (n=137)<br>
+  Todos disponíveis em <code style="background:rgba(0,0,0,.3);color:#fff">data(__, package="survival")</code></p>
+</section>
+
+<!-- ── Slide 6: mgus2 visão geral ── -->
+<section>
+  <h2>mgus2 — Gamopatia Monoclonal (Mayo Clinic, 1960–1994)</h2>
+  <div class="cols cols-2">
+    <div>
+      <h3>Contexto clínico</h3>
+      <p>MGUS é uma condição pré-maligna assintomática. Dois desfechos competem:</p>
+      <ul>
+        <li><strong>Causa 1</strong>: progressão para PCM/amiloidose</li>
+        <li><strong>Causa 2</strong>: morte sem progressão (qualquer causa)</li>
+      </ul>
+      <div class="eq" style="margin-top:.6em">
+        etime = min(ptime, futime)<br>
+        event: 0=censura · 1=progressão · 2=morte
+      </div>
+    </div>
+    <div>
+      <h3>Distribuição do desfecho</h3>
+      <table>
+        <thead><tr><th>Status</th><th>N</th><th>%</th></tr></thead>
+        <tbody>
+          <tr><td>0 — Censura</td><td>409</td><td>29,6%</td></tr>
+          <tr><td>1 — Progressão</td><td>115</td><td>8,3%</td></tr>
+          <tr><td>2 — Morte sem progr.</td><td>860</td><td>62,1%</td></tr>
+        </tbody>
+      </table>
+      <div class="box" style="margin-top:.5em">
+        Idade mediana ao diagnóstico: <strong>72 anos</strong><br>
+        Seguimento mediano: ~81 meses (6,8 anos)
+      </div>
+    </div>
+  </div>
+  <p class="nota">Kyle RA et al. (2002). <em>NEJM</em> 346(8):564–569. |
+  <code>data(mgus2, package="survival")</code></p>
+</section>
+
+<!-- ── Slide 7: 1-KM vs CIF ── -->
+<section>
+  <h2>1-KM superestima a incidência de progressão</h2>
+  <div class="cols cols-2">
+    <div>
+      <h3>Por quê o KM falha?</h3>
+      <p>O estimador de Kaplan-Meier trata mortes sem progressão como
+      <em>censura aleatória</em> — assume que quem morre sem progredir teria
+      a <em>mesma</em> probabilidade de progredir se sobrevivesse.</p>
+      <p>Isso viola a suposição de independência quando as causas competem.</p>
+      <div class="eq">
+        F̂_KM(t) = 1 − Ŝ_KM(t) ≠ F_k(t)<br>
+        F_k(t) = ∫₀ᵗ S(u⁻) · ĥ_k(u) du  [Aalen-Johansen]
+      </div>
+      <div class="box-coral box">
+        <strong>Resultado empírico (mgus2):</strong><br>
+        Em 5 anos · Progressão feminina:<br>
+        1-KM: <span class="td-dest">~6,0%</span> ·
+        CIF correta: <span class="td-ok">~4,0%</span><br>
+        Superestimativa de <strong>50%</strong>
+      </div>
+    </div>
+    <div>
+      <!-- SVG: esquema CIF vs KM -->
+      <div class="fig-wrap">
+        <svg viewBox="0 0 300 195" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+          <defs>
+            <marker id="arr2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="#6C757D"/>
+            </marker>
+          </defs>
+          <line x1="35" y1="165" x2="280" y2="165" stroke="#6C757D" stroke-width="1" marker-end="url(#arr2)"/>
+          <line x1="35" y1="20"  x2="35"  y2="170" stroke="#6C757D" stroke-width="1" marker-end="url(#arr2)"/>
+          <text x="275" y="178" font-size="9" fill="#6C757D">Anos</text>
+          <text x="36"  y="16"  font-size="9" fill="#6C757D">CIF</text>
+          <!-- 1-KM feminino tracejado coral -->
+          <polyline points="35,165 80,160 120,150 160,138 200,124 240,115 270,108"
+                    fill="none" stroke="#C0392B" stroke-width="1.8" stroke-dasharray="5,3"/>
+          <text x="272" y="110" font-size="8" fill="#C0392B">1-KM ♀</text>
+          <!-- CIF feminino sólido coral -->
+          <polyline points="35,165 80,162 120,157 160,149 200,140 240,134 270,130"
+                    fill="none" stroke="#C0392B" stroke-width="2"/>
+          <text x="272" y="132" font-size="8" fill="#C0392B">CIF ♀</text>
+          <!-- 1-KM masculino tracejado azul -->
+          <polyline points="35,165 80,161 120,152 160,142 200,130 240,122 270,116"
+                    fill="none" stroke="#2C3E50" stroke-width="1.8" stroke-dasharray="5,3"/>
+          <text x="272" y="118" font-size="8" fill="#2C3E50">1-KM ♂</text>
+          <!-- CIF masculino sólido azul -->
+          <polyline points="35,165 80,163 120,159 160,153 200,145 240,139 270,135"
+                    fill="none" stroke="#2C3E50" stroke-width="2"/>
+          <text x="272" y="137" font-size="8" fill="#2C3E50">CIF ♂</text>
+          <!-- Linha 5 anos -->
+          <line x1="120" y1="20" x2="120" y2="165" stroke="#D4A843" stroke-width="0.8" stroke-dasharray="3,2"/>
+          <text x="113" y="182" font-size="8" fill="#D4A843">5 anos</text>
+          <!-- Seta divergência -->
+          <line x1="121" y1="149" x2="121" y2="157" stroke="#6C757D" stroke-width="1.2" marker-end="url(#arr2)"/>
+          <!-- Eixo x labels -->
+          <text x="33"  y="178" font-size="8" fill="#6C757D">0</text>
+          <text x="78"  y="178" font-size="8" fill="#6C757D">5</text>
+          <text x="156" y="178" font-size="8" fill="#6C757D">15</text>
+          <text x="236" y="178" font-size="8" fill="#6C757D">25</text>
+          <!-- Legenda -->
+          <line x1="40" y1="30" x2="65" y2="30" stroke="#6C757D" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="67" y="33" font-size="8" fill="#6C757D">1-KM (errado)</text>
+          <line x1="40" y1="42" x2="65" y2="42" stroke="#6C757D" stroke-width="2"/>
+          <text x="67" y="45" font-size="8" fill="#6C757D">CIF (correto)</text>
+        </svg>
+        <p class="fig-cap">Progressão para PCM/amiloidose · mgus2<br>
+        Separação começa imediatamente — mortes competidoras são frequentes.</p>
+      </div>
+    </div>
+  </div>
+  <div class="box-azul box" style="margin-top:.3em; font-size:.78em">
+    <strong>Verificação:</strong> CIF₁(t) + CIF₂(t) + S(t) = 1 para todos os t. Impossível com dois 1-KM separados.
+  </div>
+</section>
+
+<!-- ── Slide 8: Fine & Gray ── -->
+<section>
+  <h2>Fine & Gray — Subdistribution Hazard (mgus2)</h2>
+  <p style="font-size:.78em">
+    O subdistribution hazard modela a CIF diretamente:
+    <span class="eq" style="display:inline-block;padding:.2em .6em">
+      h̃_k(t) = −d/dt [log(1 − F_k(t))]
+    </span>
+    Implementação: <code>finegray()</code> no pacote <code>survival</code>
+  </p>
+
+  <table style="margin-top:.5em">
+    <thead>
+      <tr>
+        <th>Covariável</th>
+        <th>CS-HR Progr.</th>
+        <th>SHR Progr.</th>
+        <th>CS-HR Morte</th>
+        <th>SHR Morte</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Idade (por ano)</td>
+        <td>1,016</td>
+        <td class="td-dest">0,983</td>
+        <td>1,067</td>
+        <td>1,061</td>
+      </tr>
+      <tr>
+        <td>Sexo masculino</td>
+        <td>0,995</td>
+        <td class="td-dest">0,808</td>
+        <td>1,475</td>
+        <td>1,446</td>
+      </tr>
+      <tr>
+        <td>M-spike (por g/dL)</td>
+        <td>2,421</td>
+        <td class="td-ok">2,431</td>
+        <td>0,942</td>
+        <td>0,857</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="cols cols-2" style="margin-top:.7em">
+    <div class="box-coral box">
+      <strong>Inversão do efeito da idade</strong><br>
+      CS-HR = 1,016 → cada ano extra aumenta risco instantâneo<br>
+      SHR = 0,983 → cada ano extra <em>reduz</em> a CIF de progressão<br>
+      <span style="font-size:.85em">Idosos morrem mais de outras causas (Causa 2),
+      sobrando menos para progredir → competição inverte o sinal!</span>
+    </div>
+    <div class="box box">
+      <strong>M-spike: CS ≈ SHR</strong><br>
+      M-spike afeta fortemente a progressão (HR ≈ 2,4),<br>
+      mas quase não afeta a mortalidade geral.<br>
+      Sem competição relevante → CS-HR ≈ SHR.<br>
+      <span style="font-size:.85em"><em>Quando a covariável afeta apenas uma causa,
+      os dois estimadores convergem.</em></span>
+    </div>
+  </div>
+
+  <div class="box-azul box" style="margin-top:.5em; font-size:.78em">
+    <strong>Regra prática:</strong>
+    Etiologia / mecanismo biológico → <strong>Cox causa-específica</strong>.
+    Prognóstico / comunicação de risco ao paciente → <strong>Fine & Gray (SHR)</strong>.
+  </div>
+  <p class="nota">Fine & Gray (1999). <em>JASA</em> 94(446):496–509. |
+  <code>finegray(Surv(etime, factor(event)) ~ ., data, etype=1)</code></p>
+</section>
+
+<!-- ── Slide 9: pbc fragilidade ── -->
+<section>
+  <h2>pbc — Cirrose Biliar: fragilidade por estágio histológico</h2>
+  <div class="cols cols-2">
+    <div>
+      <h3>Modelo estimado</h3>
+      <div class="eq">
+        µ(t | Z_estágio) = Z · µ₀(t) · exp(β₁trt + β₂log bili + β₃albumin)<br>
+        Z_estágio ~ Gama(1/θ, 1/θ)
+      </div>
+      <table style="margin-top:.5em">
+        <thead><tr><th>Covariável</th><th>HR (sem θ)</th><th>HR (com θ)</th></tr></thead>
+        <tbody>
+          <tr><td>D-penicilamina</td><td>0,929</td><td>0,996</td></tr>
+          <tr><td>log(Bilirrubina)</td><td>2,660</td><td>2,594</td></tr>
+          <tr><td>Albumina</td><td>0,311</td><td>0,327</td></tr>
+        </tbody>
+      </table>
+      <div class="box-ouro box" style="margin-top:.5em">
+        <strong>θ = 0,095</strong> (p = 0,023)<br>
+        Heterogeneidade significativa entre estágios<br>
+        <em>além</em> das covariáveis observadas
+      </div>
+    </div>
+    <div>
+      <h3>Fragilidades estimadas por estágio</h3>
+      <!-- SVG: barras de fragilidade por estágio -->
+      <div class="fig-wrap">
+        <svg viewBox="0 0 260 175" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+          <!-- Eixos -->
+          <line x1="40" y1="140" x2="240" y2="140" stroke="#6C757D" stroke-width="1"/>
+          <line x1="40" y1="20"  x2="40"  y2="145" stroke="#6C757D" stroke-width="1"/>
+          <!-- Linha Z=1 -->
+          <line x1="40" y1="80" x2="240" y2="80" stroke="#6C757D" stroke-width="0.8" stroke-dasharray="4,2"/>
+          <text x="242" y="83" font-size="8" fill="#6C757D">Z=1</text>
+          <!-- Barras: Z = 0.778, 0.804, 1.031, 1.387 -->
+          <!-- Estágio 1: Z=0.778 → abaixo da linha -->
+          <rect x="55"  y="92"  width="28" height="48" fill="#1A7F6E" rx="2"/>
+          <text x="69"  y="162" font-size="9" fill="#6C757D" text-anchor="middle">E1</text>
+          <text x="69"  y="88"  font-size="9" fill="#1A7F6E" text-anchor="middle">0,78</text>
+          <!-- Estágio 2: Z=0.804 -->
+          <rect x="100" y="89"  width="28" height="51" fill="#1A7F6E" rx="2"/>
+          <text x="114" y="162" font-size="9" fill="#6C757D" text-anchor="middle">E2</text>
+          <text x="114" y="85"  font-size="9" fill="#1A7F6E" text-anchor="middle">0,80</text>
+          <!-- Estágio 3: Z=1.031 -->
+          <rect x="145" y="77"  width="28" height="63" fill="#D4A843" rx="2"/>
+          <text x="159" y="162" font-size="9" fill="#6C757D" text-anchor="middle">E3</text>
+          <text x="159" y="73"  font-size="9" fill="#9A7420" text-anchor="middle">1,03</text>
+          <!-- Estágio 4: Z=1.387 -->
+          <rect x="190" y="47"  width="28" height="93" fill="#C0392B" rx="2"/>
+          <text x="204" y="162" font-size="9" fill="#6C757D" text-anchor="middle">E4</text>
+          <text x="204" y="43"  font-size="9" fill="#C0392B" text-anchor="middle">1,39</text>
+          <!-- Eixo y labels -->
+          <text x="28" y="83"  font-size="8" fill="#6C757D">1,0</text>
+          <text x="28" y="143" font-size="8" fill="#6C757D">0,5</text>
+          <text x="28" y="23"  font-size="8" fill="#6C757D">1,5</text>
+        </svg>
+        <p class="fig-cap">Fragilidade Z por estágio histológico.<br>
+        Estágios 1-2: Z &lt; 1 (mais robustos). Estágio 4: Z = 1,39 (39% acima da média).</p>
+      </div>
+      <div class="box" style="font-size:.78em; margin-top:.3em">
+        D-penicilamina: HR ≈ 1,00 em ambos os modelos.<br>
+        <strong>Confirmação histórica</strong>: o ensaio mostrou ineficácia do tratamento em 1992.
+      </div>
+    </div>
+  </div>
+  <p class="nota">Fleming & Harrington (1991). <em>Counting Processes and Survival Analysis</em>. Wiley. |
+  <code>frailty(stage, distribution="gamma")</code> · θ = 0,095 · p = 0,023</p>
+</section>
+
+<!-- ── Slide 10: veteran ── -->
+<section>
+  <h2>veteran — Câncer de Pulmão: efeito fixo vs. fragilidade</h2>
+  <div class="cols cols-2">
+    <div>
+      <h3>Quando usar efeito aleatório?</h3>
+      <p>Tipo celular é um cluster natural de fragilidade biológica:</p>
+      <ul>
+        <li>Número de grupos <strong>pequeno</strong> (k=4)</li>
+        <li>Interesse no efeito <strong>médio</strong> (marginalizado)</li>
+        <li>Heterogeneidade residual <strong>dentro</strong> de cada tipo</li>
+      </ul>
+      <div class="box-ouro box" style="margin-top:.6em">
+        <strong>θ = 0,151</strong><br>
+        Heterogeneidade entre tipos celulares<br>
+        além de karno, idade e tratamento
+      </div>
+
+      <table style="margin-top:.5em; font-size:.8em">
+        <thead><tr><th>Cov.</th><th>HR fixo</th><th>HR frailty</th></tr></thead>
+        <tbody>
+          <tr><td>Tratamento</td><td>1,354</td><td>1,340</td></tr>
+          <tr><td>Karnofsky</td><td>0,968</td><td>0,968</td></tr>
+          <tr><td>Idade</td><td>0,991</td><td>0,992</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:.72em;color:var(--cinza);margin-top:.3em">
+        Com poucos clusters, efeito fixo ≈ fragilidade.<br>
+        A diferença cresce com k e com θ.
+      </p>
+    </div>
+    <div>
+      <h3>Fragilidades por tipo celular</h3>
+      <div class="fig-wrap">
+        <svg viewBox="0 0 250 170" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+          <line x1="35" y1="130" x2="230" y2="130" stroke="#6C757D" stroke-width="1"/>
+          <line x1="35" y1="15"  x2="35"  y2="135" stroke="#6C757D" stroke-width="1"/>
+          <!-- Linha Z=1 -->
+          <line x1="35" y1="80" x2="230" y2="80" stroke="#6C757D" stroke-width="0.8" stroke-dasharray="4,2"/>
+          <text x="232" y="83" font-size="8" fill="#6C757D">Z=1</text>
+          <!-- squamous: Z=0.577 -->
+          <rect x="45"  y="88"  width="35" height="42" fill="#1A7F6E" rx="2"/>
+          <text x="62"  y="148" font-size="8" fill="#6C757D" text-anchor="middle">squam.</text>
+          <text x="62"  y="84"  font-size="9" fill="#1A7F6E" text-anchor="middle">0,58</text>
+          <!-- smallcell: Z=1.164 -->
+          <rect x="92"  y="69"  width="35" height="61" fill="#D4A843" rx="2"/>
+          <text x="109" y="148" font-size="8" fill="#6C757D" text-anchor="middle">small</text>
+          <text x="109" y="65"  font-size="9" fill="#9A7420" text-anchor="middle">1,16</text>
+          <!-- adeno: Z=1.446 -->
+          <rect x="139" y="44"  width="35" height="86" fill="#C0392B" rx="2"/>
+          <text x="156" y="148" font-size="8" fill="#6C757D" text-anchor="middle">adeno</text>
+          <text x="156" y="40"  font-size="9" fill="#C0392B" text-anchor="middle">1,45</text>
+          <!-- large: Z=0.813 -->
+          <rect x="186" y="81"  width="35" height="49" fill="#2C3E50" rx="2"/>
+          <text x="203" y="148" font-size="8" fill="#6C757D" text-anchor="middle">large</text>
+          <text x="203" y="77"  font-size="9" fill="#2C3E50" text-anchor="middle">0,81</text>
+          <!-- labels eixo y -->
+          <text x="18" y="83"  font-size="8" fill="#6C757D">1,0</text>
+          <text x="18" y="133" font-size="8" fill="#6C757D">0,5</text>
+          <text x="18" y="33"  font-size="8" fill="#6C757D">1,5</text>
+        </svg>
+        <p class="fig-cap">Adenocarcinoma: Z = 1,45 (45% acima da média).<br>
+        Squamous: Z = 0,58 (mais robusto que a média). θ = 0,151.</p>
+      </div>
+      <div class="box-coral box" style="font-size:.76em">
+        <strong>Conexão com a aula teórica:</strong> tipos celulares mais frágeis
+        (adeno, smallcell) morrem mais cedo → seus sobreviventes tornam-se
+        progressivamente mais robustos que a média — exatamente o mecanismo
+        do "plateau" descrito em Vaupel et al. (1979).
+      </div>
+    </div>
+  </div>
+  <p class="nota">Kalbfleisch & Prentice (1980). <em>The Statistical Analysis of Failure Time Data</em>. Wiley. |
+  <code>frailty(celltype, distribution="gamma")</code></p>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SLIDE 11 — GUIA DE ESCOLHA
+════════════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>Guia de escolha de modelo</h2>
+  <table style="margin-top:.4em">
+    <thead>
+      <tr>
+        <th>Pergunta de pesquisa</th>
+        <th>Modelo adequado</th>
+        <th>Exemplo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Mecanismo etiológico<br><em>(dado vivo, qual o risco?)</em></td>
+        <td class="td-ok">Cox causa-específica</td>
+        <td>CS-HR do M-spike em mgus2</td>
+      </tr>
+      <tr>
+        <td>Prognóstico / incidência observada<br><em>(o que acontece na população?)</em></td>
+        <td class="td-ok">Fine & Gray (SHR)</td>
+        <td>SHR da idade em mgus2</td>
+      </tr>
+      <tr>
+        <td>Plateau de mortalidade<br><em>(centenários, idades muito avançadas)</em></td>
+        <td class="td-ok">Fragilidade + Gompertz paramétrico</td>
+        <td>Plateau teórico: b/σ²</td>
+      </tr>
+      <tr>
+        <td>Dados agrupados / famílias<br><em>(dependência intracluster)</em></td>
+        <td class="td-ok">Fragilidade compartilhada (frailtypack)</td>
+        <td>pbc: estágio · veteran: tipo celular</td>
+      </tr>
+      <tr>
+        <td>Agrupados + riscos competitivos</td>
+        <td class="td-ok">multivPenal / CS-frailty por causa</td>
+        <td>Dados hospitalares com clusters</td>
+      </tr>
+      <tr>
+        <td>Cruzamento de curvas entre grupos</td>
+        <td class="td-dest">Suspeitar seleção diferencial (σ² ≠)</td>
+        <td>mgus2: F vs. M · exercício câncer de mama</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="box-ouro box" style="margin-top:.7em; font-size:.78em">
+    <strong>Regra de ouro da trilogia Vaupel & Yashin (1987–1988):</strong>
+    Qualquer intervenção que altera <em>quem morre</em> altera também a composição de fragilidade
+    dos sobreviventes — com efeitos persistentes que não aparecem em modelos sem Z.
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SLIDE 12 — Z̄(x) SÍNTESE
+════════════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>Síntese: a queda de Z̄(x) como mecanismo universal</h2>
+  <div class="cols cols-2">
+    <div>
+      <div class="eq" style="margin-bottom:.6em">
+        Z̄(x) = 1 / [1 + σ² · Λ₀(x)]<br>
+        <span style="font-size:.85em">Vaupel, Manton & Stallard (1979)</span>
+      </div>
+      <p>Quanto maior σ² e maior a idade, menor é Z̄(x):<br>
+      a seleção progressiva torna os sobreviventes cada vez mais robustos.</p>
+      <div class="cols cols-3" style="margin-top:.8em; gap:.5em">
+        <div style="text-align:center">
+          <div class="num-grande" style="color:#1A7F6E">↓</div>
+          <span class="num-label">Z̄(x)<br>com idade</span>
+        </div>
+        <div style="text-align:center">
+          <div class="num-grande" style="color:#C0392B">↓</div>
+          <span class="num-label">µ̄(x) vs.<br>µ₀(x)</span>
+        </div>
+        <div style="text-align:center">
+          <div class="num-grande" style="color:#2C3E50">↓</div>
+          <span class="num-label">Viés HR<br>no Cox</span>
+        </div>
+      </div>
+      <div class="box" style="margin-top:.7em; font-size:.8em">
+        <strong>O mesmo mecanismo explica:</strong>
+        <ul class="disc" style="font-size:.92em">
+          <li>Plateau de mortalidade em centenários</li>
+          <li>Cruzamento de curvas negro/branco EUA (slide 5)</li>
+          <li>Efeito Phoenix após desastres (slide 34)</li>
+          <li>Cruzamento mgus2: mulheres vs. homens</li>
+          <li>Fragilidade crescente por estágio em pbc</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="fig-wrap">
+        <svg viewBox="0 0 280 195" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+          <defs>
+            <marker id="arr3" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="#6C757D"/>
+            </marker>
+          </defs>
+          <line x1="30" y1="165" x2="265" y2="165" stroke="#6C757D" stroke-width="1" marker-end="url(#arr3)"/>
+          <line x1="30" y1="15"  x2="30"  y2="170" stroke="#6C757D" stroke-width="1" marker-end="url(#arr3)"/>
+          <text x="260" y="178" font-size="9" fill="#6C757D">Idade</text>
+          <text x="32"  y="13"  font-size="9" fill="#6C757D">Z̄(x)</text>
+          <!-- Linha Z=1 em y=52 (topo aproximado) -->
+          <line x1="30" y1="52" x2="265" y2="52" stroke="#6C757D" stroke-width="0.8" stroke-dasharray="3,2"/>
+          <text x="232" y="50" font-size="8" fill="#6C757D">Z̄=1 (início)</text>
+          <!-- σ²=0.1 cai devagar -->
+          <polyline points="30,52 70,49 110,46 150,43 190,40 230,38 260,36"
+                    fill="none" stroke="#2C3E50" stroke-width="2"/>
+          <text x="262" y="38" font-size="8" fill="#2C3E50">σ²=0,1</text>
+          <!-- σ²=0.5 -->
+          <polyline points="30,52 70,45 110,38 150,32 190,27 230,23 260,21"
+                    fill="none" stroke="#1A7F6E" stroke-width="2"/>
+          <text x="262" y="23" font-size="8" fill="#1A7F6E">σ²=0,5</text>
+          <!-- σ²=1.0 -->
+          <polyline points="30,52 70,40 110,30 150,22 190,16 230,12 260,10"
+                    fill="none" stroke="#D4A843" stroke-width="2"/>
+          <text x="210" y="9" font-size="8" fill="#9A7420">σ²=1,0</text>
+          <!-- σ²=1.5 quase chega a 0 -->
+          <polyline points="30,52 70,36 110,24 150,14 190,8 230,5 260,4"
+                    fill="none" stroke="#C0392B" stroke-width="2"/>
+          <text x="174" y="4" font-size="8" fill="#C0392B">σ²=1,5</text>
+          <!-- Eixo x -->
+          <text x="28"  y="178" font-size="8" fill="#6C757D">40</text>
+          <text x="108" y="178" font-size="8" fill="#6C757D">70</text>
+          <text x="188" y="178" font-size="8" fill="#6C757D">85</text>
+          <text x="248" y="178" font-size="8" fill="#6C757D">100</text>
+          <!-- Eixo y -->
+          <text x="14" y="56"  font-size="8" fill="#6C757D">1,0</text>
+          <text x="14" y="116" font-size="8" fill="#6C757D">0,5</text>
+          <text x="14" y="166" font-size="8" fill="#6C757D">0,0</text>
+        </svg>
+        <p class="fig-cap">Z̄(x) = 1/[1 + σ²·Λ₀(x)] com µ₀(x) = 0,0001·e<sup>0,09x</sup><br>
+        Quanto maior σ², mais rápida a seleção — menos frágeis os sobreviventes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SLIDE 13 — REFERÊNCIAS
+════════════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>Referências principais</h2>
+  <div class="cols cols-2" style="font-size:.73em; line-height:1.7">
+    <div>
+      <h3>Fragilidade</h3>
+      <ul class="disc">
+        <li>Vaupel, Manton & Stallard (1979). <em>Demography</em> 16(3)</li>
+        <li>Vaupel & Yashin (1985). <em>Am. Statistician</em> 39(3)</li>
+        <li>Vaupel & Yashin (1987). <em>Demography</em> 24(1) [ressuscitação]</li>
+        <li>Vaupel, Yashin & Manton (1988). <em>Math. Pop. Studies</em> 1(1)</li>
+        <li>Elbers & Ridder (1982). <em>Rev. Econ. Studies</em> 49(3)</li>
+        <li>Wienke (2003). MPIDR WP 2003-032</li>
+        <li>Duchateau & Janssen (2008). <em>The Frailty Model</em>. Springer</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Riscos competitivos & datasets</h3>
+      <ul class="disc">
+        <li>Fine & Gray (1999). <em>JASA</em> 94(446):496–509</li>
+        <li>Beyersmann et al. (2012). <em>Competing Risks in R</em>. Springer</li>
+        <li>Kyle et al. (2002). <em>NEJM</em> 346(8):564–569 [mgus2]</li>
+        <li>Fleming & Harrington (1991). <em>Counting Processes</em>. Wiley [pbc]</li>
+        <li>Kalbfleisch & Prentice (1980). <em>Failure Time Data</em>. Wiley [veteran]</li>
+      </ul>
+      <div class="box-azul box" style="margin-top:.6em; font-size:.9em">
+        <strong>Código & dados</strong><br>
+        <code>github.com/vdilego/lab_fragilidade</code><br>
+        Datasets: <code>survival::mgus2</code> · <code>survival::pbc</code> · <code>survival::veteran</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SLIDE 14 — ENCERRAMENTO
+════════════════════════════════════════════════════════════════════ -->
+<section class="titulo-slide" data-background-color="#1E2B38">
+  <h1 style="font-size:1.4em; line-height:1.4">
+    "Os mais frágeis morrem primeiro.<br>
+    O grupo sobrevivente torna-se progressivamente<br>
+    mais robusto — e a taxa observada parece<br>
+    menor do que a taxa individual."
+  </h1>
+  <p class="sub" style="margin-top:1em">Vaupel & Yashin (1985) · <em>Heterogeneity's Ruses</em></p>
+  <br>
+  <h3>Obrigada!</h3>
+  <p style="color:#BDC3C7">
+    Prof. Vanessa Di Lego · CEDEPLAR/UFMG<br>
+    <code style="background:rgba(255,255,255,.1);color:#A8C7B8">vdilego.github.io</code>
+  </p>
+</section>
+
+</div><!-- .slides -->
+</div><!-- .reveal -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'fast',
+  controls: true,
+  progress: true,
+  center: false,
+  width: 1100,
+  height: 680,
+  margin: 0.04,
+  plugins: []
+});
+</script>
+</body>
+</html>
