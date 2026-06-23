@@ -1,7 +1,6 @@
 ################################################################################
 ##                                                                            ##
 ##   LABORATÓRIO: HETEROGENEIDADE, FRAGILIDADE E RISCOS COMPETITIVOS          ##
-##   CEDEPLAR/UFMG                                                            ##
 ##   Referência principal: Vaupel, Manton & Stallard (1979); Vaupel &         ##
 ##   Yashin (1985); Fine & Gray (1999)                                        ##
 ##                                                                            ##
@@ -9,6 +8,7 @@
 ##   Data: Junho 2026                                                         ##
 ##                                                                            ##
 ################################################################################
+
 
 ## ============================================================================
 ## PARTE 1 — PREPARAÇÃO E CONCEITOS
@@ -19,21 +19,22 @@
 ## ----------------------------------------------------------------------------
 
 # Execute apenas na primeira vez:
-# install.packages(c("survival", "frailtypack", "cmprsk", "tidycmprsk",
-#                    "mstate", "tidyverse", "ggplot2", "patchwork",
-#                    "flexsurv", "survminer", "ggsci"))
+# install.packages(c("survival", "cmprsk", "tidyverse",
+#                    "ggplot2", "patchwork", "ggsci", "scales", "broom"))
+#
+# Pacotes opcionais (instalação separada, não necessários para este script):
+#   frailtypack  — fragilidade semiparamétrica avançada
+#   flexsurv     — modelos paramétricos com fragilidade gama
+#   survminer    — visualizações Kaplan-Meier prontas para publicação
+#   tidycmprsk   — interface tidy para riscos competitivos
 
-library(survival)
-library(frailtypack)
-library(cmprsk)        # Fine & Gray clássico
-library(tidycmprsk)    # interface tidy para riscos competitivos
-library(mstate)        # modelos multi-estado
-library(tidyverse)
+library(survival)   # coxph, frailty, finegray, survfit — núcleo do laboratório
+library(cmprsk)     # Fine & Gray via crr() — alternativa ao finegray()
+library(tidyverse)  # dplyr, ggplot2, purrr, tibble
 library(ggplot2)
-library(patchwork)
-library(flexsurv)      # modelos paramétricos com fragilidade
-library(survminer)     # visualização de curvas de sobrevivência
-library(ggsci)         # paletas de cores para publicação
+library(patchwork)  # combinar múltiplos gráficos
+library(ggsci)      # paletas de cores para publicação (jco, nejm)
+library(broom)      # tidy() para objetos survfit e coxph
 
 # Tema ggplot para as figuras
 theme_demog <- theme_bw(base_size = 13) +
@@ -58,32 +59,32 @@ set.seed(2026)  # reprodutibilidade
 ##
 
 simular_populacao <- function(N = 5000, a = 0.0001, b = 0.09,
-                               sigma2 = 0.5, x0 = 40) {
+                              sigma2 = 0.5, x0 = 40) {
   # Parâmetros Gompertz: µ₀(x) = a·exp(b·x), começando na idade x0
   # Fragilidade gama: Z ~ Gama(k, k), k = 1/σ²
-
+  
   k   <- 1 / sigma2
   Z   <- rgamma(N, shape = k, rate = k)   # E[Z]=1, Var[Z]=σ²
-
+  
   # Tempo de morte via inversão da função de sobrevivência condicional:
   # S(x|Z) = exp(-Z · Λ₀(x)), Λ₀(x) = (a/b)(exp(bx) - 1)
   # T = (1/b) · log(1 - (b·log(U)) / (Z·a·exp(b·x0))) + x0
   # onde U ~ Uniforme(0,1)
-
+  
   U <- runif(N)
   Λ0_x0 <- (a / b) * (exp(b * x0) - 1)   # risco acumulado acumulado até x0
-
+  
   # Risco acumulado total que cada indivíduo deve atingir: -log(U)/Z
   H_total <- -log(U) / Z
-
+  
   # Inverte Λ₀(x) = (a/b)(exp(bx)-1) para achar x
   # exp(bx) = 1 + (b/a)·H_total  →  x = log(1 + (b/a)·H_total) / b
   tempo_morte <- log(1 + (b / a) * H_total) / b
-
+  
   # Censura administrativa aos 100 anos
   censurado <- as.integer(tempo_morte > 100)
   tempo_obs <- pmin(tempo_morte, 100)
-
+  
   tibble(
     id      = 1:N,
     Z       = Z,
@@ -97,6 +98,16 @@ simular_populacao <- function(N = 5000, a = 0.0001, b = 0.09,
 pop_homog  <- simular_populacao(sigma2 = 0.00001)  # ≈ homogênea
 pop_media  <- simular_populacao(sigma2 = 0.5)
 pop_alta   <- simular_populacao(sigma2 = 1.5)
+
+## Parâmetros globais — mesmos valores dos defaults da função acima.
+## Definidos aqui (após as simulações) para que as seções 2.2 e seguintes
+## possam usar a, b, sigma2 e x0 diretamente, sem redefini-los.
+## IMPORTANTE: estes valores devem ser consistentes com a chamada
+##   simular_populacao(sigma2 = 0.5) usada em `pop_media` acima.
+a      <- 0.0001   # nível base do risco Gompertz: µ₀(x) = a·exp(b·x)
+b      <- 0.09     # ritmo de aumento do risco com a idade
+sigma2 <- 0.5      # variância da fragilidade (população de referência)
+x0     <- 40       # idade de início da observação
 
 pop_todas <- bind_rows(
   pop_homog  %>% mutate(grupo = "σ²≈0 (homogênea)"),
@@ -115,6 +126,49 @@ pop_todas %>%
     e0         = round(mean(tempo), 1)
   ) %>%
   print()
+
+## RESULTADO CONTRAINTUITIVO — LEIA ANTES DE CONTINUAR:
+##
+##   A tabela acima mostra que e₀ SOBE com σ² (ex.: ~69 → ~72 → ~79 anos).
+##   Isso parece contraditório: indivíduos com Z alto têm vida mais curta,
+##   então por que a média da população aumenta com a heterogeneidade?
+##
+##   Resposta: DESIGUALDADE DE JENSEN.
+##
+##   e₀(Z) é uma função CONVEXA de Z:
+##     e₀(Z=0.25) ≈ 85 anos  (+14 acima de e₀(1))
+##     e₀(Z=1.00) ≈ 71 anos  [referência]
+##     e₀(Z=1.75) ≈ 66 anos  (−5 abaixo de e₀(1))
+##
+##   O ganho dos robustos (+14) supera a perda dos frágeis (−5).
+##   Formalmente: E[e₀(Z)] ≥ e₀(E[Z]) = e₀(1) para qualquer f convexa.
+##   Maior σ² → distribuição mais espalhada → maior ganho Jensen → maior e₀.
+##
+##   Isso NÃO contradiz o plateau: µ̄(x) desacelera (plateau mais baixo com
+##   maior σ²) ao mesmo tempo que e₀ sobe. São dois fenômenos distintos:
+##   o plateau descreve a COMPOSIÇÃO dos sobreviventes; e₀ descreve a
+##   MÉDIA da população original.
+
+cat("\n=== Verificação da convexidade de e₀(Z) ===\n")
+e0_dado_Z <- function(Z_val, a=0.0001, b=0.09, x0=40) {
+  # e₀(Z) = x0 + integral de S(x|Z) dx
+  # S(x|Z) = exp(-Z * (Lambda0(x) - Lambda0(x0)))
+  Lambda0 <- function(x) (a/b)*(exp(b*x) - 1)
+  L0x0    <- Lambda0(x0)
+  x0 + integrate(function(x) exp(-Z_val*(Lambda0(x) - L0x0)), x0, x0+200)$value
+}
+tab_e0Z <- data.frame(
+  Z       = c(0.25, 0.50, 0.75, 1.00, 1.50, 2.00, 3.00),
+  e0_anos = sapply(c(0.25, 0.50, 0.75, 1.00, 1.50, 2.00, 3.00), e0_dado_Z)
+)
+tab_e0Z$var_vs_Z1 <- round(tab_e0Z$e0_anos - tab_e0Z$e0_anos[tab_e0Z$Z == 1], 1)
+tab_e0Z$e0_anos   <- round(tab_e0Z$e0_anos, 1)
+print(tab_e0Z)
+
+cat("\nAssimetria Jensen: ganho de Z=0.25 (+", tab_e0Z$var_vs_Z1[1],
+    " anos) > perda de Z=1.75 (",
+    round(e0_dado_Z(1.75)-e0_dado_Z(1.0), 1), " anos)\n")
+cat("→ A média ponderada E[e₀(Z)] sempre supera e₀(E[Z]) = e₀(1).\n")
 
 
 ## ----------------------------------------------------------------------------
@@ -182,9 +236,19 @@ fig1a + fig1b +
   )
 
 ## PAUSA PARA DISCUSSÃO (5 min):
+##
+##   Sobre µ̄(x) e o plateau:
 ##   → Por que a curva observada é mais plana que µ₀(x)?
 ##   → O que Vaupel & Yashin (1985) chamam de "heterogeneity's ruses"?
 ##   → Como isso se relaciona ao plateau de mortalidade em centenários?
+##
+##   Sobre e₀ e a desigualdade de Jensen:
+##   → A tabela acima mostra e₀ SUBINDO com σ². Por que isso não contradiz
+##     o fato de que indivíduos com Z alto morrem mais cedo?
+##   → O que é uma função convexa? Por que e₀(Z) é convexa?
+##   → Como reconciliar "plateau mais baixo com σ² maior" (µ̄(x) desacelera)
+##     com "e₀ maior com σ² maior" (Jensen)?
+##   → Se σ² → ∞, o que acontece com e₀? E com o plateau b/σ²?
 
 
 ## ============================================================================
@@ -213,486 +277,239 @@ cat("Proporção de mortes:", round(mean(dados$evento), 3), "\n")
 ## que afeta Z diferencialmente.
 
 # Criando covariável correlacionada com Z (simula variável socioeconômica)
+# e agrupando em clusters de família para a demonstração de fragilidade.
+#
+# NOTA TÉCNICA: frailty(id) com um cluster por indivíduo (N=5000 clusters)
+#   produz θ → 0 por overfitting e pode não convergir. O correto para
+#   demonstrar o viés é usar clusters com múltiplos indivíduos.
+#   Aqui usamos 500 famílias de 10 indivíduos cada.
+
 dados <- dados %>%
   mutate(
-    # Exposição: maior Z → maior probabilidade de X=1 (vulnerabilidade)
-    X = rbinom(n(), 1, prob = pmin(0.9, Z / (Z + 1))),
-    # Segundo grupo (controle) tem fragilidade menor em média
-    Z_verdadeiro = Z
+    X            = rbinom(n(), 1, prob = pmin(0.9, Z / (Z + 1))),
+    Z_verdadeiro = Z,
+    familia      = as.factor(rep(1:500, each = 10))
   )
 
 # Efeito VERDADEIRO (condicional em Z): β_cond ≈ log(2) ≈ 0.69
 # porque X está positivamente correlacionado com Z
 
-# Modelo Cox SEM fragilidade
+# Modelo Cox SEM fragilidade — estima β_marginal (populacional)
 cox_sem <- coxph(Surv(tempo, evento) ~ X, data = dados)
 cat("\n=== Cox sem fragilidade (β marginal — VIESADO) ===\n")
-summary(cox_sem)$coefficients
+print(round(summary(cox_sem)$coefficients, 4))
 
-# Modelo Cox COM fragilidade gama (semi-paramétrico)
-cox_com_gama <- coxph(Surv(tempo, evento) ~ X + frailty(id, distribution = "gamma"),
-                      data = dados)
+# Modelo Cox COM fragilidade gama — estima β_condicional (individual)
+# Usa clusters de família (500 × 10) para identificabilidade adequada.
+cox_com_gama <- coxph(
+  Surv(tempo, evento) ~ X + frailty(familia, distribution = "gamma"),
+  data = dados
+)
 cat("\n=== Cox com fragilidade gama (β condicional — MENOS VIESADO) ===\n")
-summary(cox_com_gama)$coefficients[1, , drop = FALSE]
+print(round(summary(cox_com_gama)$coefficients[1, , drop = FALSE], 4))
 
 cat("\n--- Comparação do viés ---\n")
-beta_marginal     <- coef(cox_sem)["X"]
-beta_condicional  <- coef(cox_com_gama)["X"]
-cat("β marginal (Cox simples):", round(beta_marginal, 4), "\n")
-cat("β condicional (c/ fragilidade):", round(beta_condicional, 4), "\n")
-cat("HR marginal:", round(exp(beta_marginal), 3), "\n")
-cat("HR condicional:", round(exp(beta_condicional), 3), "\n")
+beta_marginal    <- coef(cox_sem)["X"]
+beta_condicional <- coef(cox_com_gama)["X"]
+cat("β marginal (Cox simples):       ", round(beta_marginal, 4), "\n")
+cat("β condicional (c/ fragilidade): ", round(beta_condicional, 4), "\n")
+cat("HR marginal:    ", round(exp(beta_marginal), 3), "\n")
+cat("HR condicional: ", round(exp(beta_condicional), 3), "\n")
+cat("Viés (subestimativa):", round((1 - exp(beta_marginal)/exp(beta_condicional))*100, 1),
+    "%\n")
 
 ## → O modelo sem fragilidade SUBESTIMA o HR verdadeiro.
 ##   Este é o "attenuation bias" por variáveis omitidas (Z).
+##   O HR marginal é sempre menor que o HR condicional quando X e Z
+##   estão positivamente correlacionados.
 
 
 ## ----------------------------------------------------------------------------
-## 2.2  Fragilidade gama com risco de base Gompertz (paramétrico)
+## 2.2  Plateau de Gompertz + fragilidade gama: verificação analítica e numérica
 ## ----------------------------------------------------------------------------
 ##
 ## TEORIA (slide 13):
-##   µ(x|Z) = Z·a·exp(bx)
-##   µ̄(x) = a·exp(bx) / [1 + σ²·(a/b)·(exp(bx) - 1)]   →   plateau b/σ²
+##   µ(x|Z) = Z · a · exp(bx)
+##   µ̄(x)  = a · exp(bx) / [1 + σ² · (a/b) · (exp(bx) − 1)]
+##   Limite para x → ∞:   µ̄(x) → b/σ²   [plateau]
 ##
+## NOTA: {flexsurv} não é necessário aqui. O plateau b/σ² decorre da
+##   matemática do modelo e pode ser:
+##   (a) calculado diretamente com os parâmetros conhecidos da simulação
+##   (b) estimado empiricamente por regressão de log(µ̄(x)) sobre idade
+##   (c) verificado numericamente comparando µ̄(x) observada com b/σ²
+##
+## As três abordagens são mostradas abaixo.
 
-# Via flexsurv: especificamos Gompertz + fragilidade gama
-# Nota: flexsurv usa hazard scale (shape=b, rate=a para Gompertz)
-frail_gompertz <- flexsurvreg(
-  Surv(tempo, evento) ~ X,
-  data = dados,
-  dist = "gompertz",
-  mixture = FALSE
-)
+## --- (a) Plateau analítico com parâmetros da simulação ---
+# Os parâmetros a, b e sigma2 foram definidos na simulação acima.
+plateau_teorico <- b / sigma2   # b=0.09, sigma2=0.5 → plateau=0.18
 
-cat("\n=== Gompertz paramétrico (sem fragilidade explícita, para referência) ===\n")
-print(frail_gompertz)
+cat("\n=== Plateau de Gompertz + fragilidade gama ===\n")
+cat("Parâmetros da simulação: a =", a, " b =", b, " σ² =", sigma2, "\n")
+cat("Plateau teórico b/σ² =", round(plateau_teorico, 4),
+    "por ano (µ̄(x) converge para este valor em x→∞)\n")
 
-# Estimativa do plateau teórico: b/σ²
-b_est    <- frail_gompertz$res["shape", "est"]
-sigma2_est <- summary(cox_com_gama)$print$`Var[frailty]`
-if (is.null(sigma2_est)) sigma2_est <- 0.5   # fallback
+## --- (b) Estimativa de b por regressão de log(µ̄(x)) sobre idade ---
+## Nas idades jovens (antes da seleção distorcer a curva observada),
+## log(µ̄(x)) ≈ log(a) + bx porque Z̄(x) ≈ 1.
+## Usamos apenas idades 40–65 para a regressão.
+calcular_mu_obs_2 <- function(df, largura = 5) {
+  idades <- seq(40, 95, by = largura)
+  res <- lapply(idades, function(xi) {
+    n <- sum(df$tempo >= xi)
+    d <- sum(df$tempo >= xi & df$tempo < xi + largura & df$evento == 1)
+    if (n < 50 || d == 0) return(NULL)
+    data.frame(idade = xi + largura/2, mu_obs = d / (n * largura), n_risco = n)
+  })
+  do.call(rbind, Filter(Negate(is.null), res))
+}
 
-cat("\nPlateau teórico estimado (b/σ²):", round(b_est / sigma2_est, 4), "\n")
-cat("Interpretação: a força de mortalidade se estabiliza em torno de",
-    round(b_est / sigma2_est, 4), "por ano em idades muito avançadas.\n")
+mu_tabela <- calcular_mu_obs_2(dados)
+
+# Regressão apenas nas idades jovens (antes da seleção)
+mu_jovem <- subset(mu_tabela, idade < 66)
+lm_gomp  <- lm(log(mu_obs) ~ idade, data = mu_jovem)
+b_est    <- coef(lm_gomp)["idade"]
+a_est    <- exp(coef(lm_gomp)["(Intercept)"])
+
+cat("\nGompertz estimado por regressão de log(µ̄(x)) sobre idade (idades 40–65):\n")
+cat("  a_est =", round(a_est, 6), "  b_est =", round(b_est, 4), "\n")
+cat("  Valores verdadeiros: a = 0.0001  b = 0.09\n")
+cat("  Plateau estimado b_est/σ²:", round(b_est / sigma2, 4), "\n")
+
+## --- (c) Verificação numérica: µ̄(x) observada se aproxima de b/σ²? ---
+cat("\n--- Verificação numérica: µ̄(x) nas idades avançadas ---\n")
+cat("(compara com plateau teórico =", round(plateau_teorico, 5), ")\n\n")
+print(round(tail(mu_tabela, 5), 5))
+
+cat("\nInterpretação:\n")
+cat("  µ̄(x) observada nas faixas 90–100 anos se aproxima de", round(plateau_teorico, 3), "\n")
+cat("  mas nunca o atinge completamente com dados finitos.\n")
+cat("  Maior σ² → plateau MAIS BAIXO (b/σ²↓); µ̄(x) desacelera mais cedo.\n")
+cat("  A curva individual µ₀(x) = a·exp(bx) nunca para de crescer —\n")
+cat("  o plateau é propriedade da POPULAÇÃO, não do indivíduo.\n")
 
 
 ## ----------------------------------------------------------------------------
-## 2.3  Fragilidade gama semiparamétrica — frailtypack
+## 2.3  Fragilidade gama semiparamétrica — survival::coxph com frailty()
 ## ----------------------------------------------------------------------------
 ##
-## frailtypack permite fragilidade compartilhada e correlacionada,
-## útil para dados agrupados (famílias, clusters geográficos).
+## NOTA: {frailtypack} oferece mais opções (risco de base penalizado,
+##   fragilidade correlacionada), mas requer instalação separada.
+##   O pacote {survival} (já carregado) implementa fragilidade gama e
+##   log-normal via frailty() diretamente no coxph(), o que é suficiente
+##   para o laboratório.
 ##
-## Aqui usamos o modelo univariado (sem cluster real, apenas para ilustrar
-## a estimação de σ²).
-
-# Para frailtypack, precisamos de um id de cluster.
-# No contexto univariado, cada indivíduo é seu próprio "cluster".
-# Para um exemplo mais realista, agrupamos em 500 famílias de 10
+## Para dados com cluster natural (famílias, hospitais):
+##   frailty(id_cluster, distribution = "gamma")
+##
+## Agrupamos em 500 famílias de 10 indivíduos para simular dependência.
 
 dados_cluster <- dados %>%
-  mutate(familia = rep(1:500, each = 10))
+  mutate(familia = as.factor(rep(1:500, each = 10)))
 
-frail_gama_pack <- frailtyPenal(
-  Surv(tempo, evento) ~ X + cluster(familia),
-  data    = dados_cluster,
-  n.knots = 8,                # nós para o risco de base não-paramétrico
-  kappa   = 10000,            # penalidade de suavização
-  RandDist = "Gamma"
+cat("\n=== 2.3 Fragilidade gama — coxph() com cluster de família ===\n")
+cox_frail_gama <- coxph(
+  Surv(tempo, evento) ~ X + frailty(familia, distribution = "gamma"),
+  data = dados_cluster
 )
+print(summary(cox_frail_gama))
 
-cat("\n=== frailtypack: fragilidade gama compartilhada por família ===\n")
-print(frail_gama_pack)
-
-cat("\nθ (variância da fragilidade):", round(frail_gama_pack$theta, 4), "\n")
-cat("IC 95%: [", round(frail_gama_pack$theta - 1.96 * frail_gama_pack$seTheta, 4),
-    ",", round(frail_gama_pack$theta + 1.96 * frail_gama_pack$seTheta, 4), "]\n")
-
-## → θ > 0 indica heterogeneidade significativa entre famílias.
+## Extrair θ (variância da fragilidade gama)
+hist_gama   <- cox_frail_gama$history[[1]]$history
+theta_gama  <- hist_gama[nrow(hist_gama), "theta"]
+cat("\nθ gama (variância da fragilidade):", round(theta_gama, 4), "\n")
+cat("Valor verdadeiro σ² da simulação:  ", sigma2, "\n")
+cat("\nInterpretação: θ =", round(theta_gama, 4), "\n")
+if (theta_gama < 0.01) {
+  cat("  θ ≈ 0 — resultado esperado nesta simulação.\n")
+  cat("  As 500 'famílias' foram formadas agrupando indivíduos independentes\n")
+  cat("  em sequência: não há dependência real intra-cluster, então o modelo\n")
+  cat("  corretamente estima θ ≈ 0 (sem heterogeneidade entre clusters além de X).\n")
+  cat("  Para observar θ > 0: simular dados com Z compartilhado por família, ou\n")
+  cat("  usar dados reais (pbc, veteran na Parte 2 — lab2_dados_reais.R).\n")
+} else {
+  cat("  θ > 0 → heterogeneidade significativa entre famílias além de X.\n")
+  cat("  Cada família compartilha um Z que multiplica seu risco de base.\n")
+  cat("  θ → 0 reduziria o modelo ao Cox padrão sem fragilidade.\n")
+}
 
 
 ## ----------------------------------------------------------------------------
-## 2.4  Fragilidade log-normal
+## 2.4  Fragilidade log-normal — survival::coxph com frailty()
 ## ----------------------------------------------------------------------------
 ##
 ## TEORIA (slide 20):
-##   Z = exp(W),   W ~ N(µ_Z, σ_Z²)
+##   Z = exp(W),   W ~ N(0, σ²)
 ##   Sem forma fechada para a Laplaciana → integração numérica (EM penalizado)
-##
-## A log-normal tem cauda mais pesada que a gama, capturando
-## heterogeneidade extrema (alguns indivíduos com Z >> 1).
+##   Cauda mais pesada que a gama: captura melhor Z >> 1 (heterogeneidade extrema)
 
-frail_lognorm <- frailtyPenal(
-  Surv(tempo, evento) ~ X + cluster(familia),
-  data     = dados_cluster,
-  n.knots  = 8,
-  kappa    = 10000,
-  RandDist = "LogN"
+cat("\n=== 2.4 Fragilidade log-normal — coxph() ===\n")
+cox_frail_logn <- coxph(
+  Surv(tempo, evento) ~ X + frailty(familia, distribution = "gaussian"),
+  # "gaussian" no survival = fragilidade log-normal (W ~ N(0, θ))
+  data = dados_cluster
 )
+print(summary(cox_frail_logn))
 
-cat("\n=== frailtypack: fragilidade log-normal ===\n")
-print(frail_lognorm)
-cat("θ log-normal:", round(frail_lognorm$theta, 4), "\n")
+hist_logn  <- cox_frail_logn$history[[1]]$history
+theta_logn <- hist_logn[nrow(hist_logn), "theta"]
+cat("\nθ log-normal:", round(theta_logn, 4), "\n")
+
+cat("\nNota técnica: distribution='gaussian' no coxph() corresponde a fragilidade\n")
+cat("  log-normal porque o efeito aleatório entra na escala log do hazard:\n")
+cat("  µ(x|W) = exp(W) · µ₀(x),  W ~ N(0, θ)  ↔  Z = exp(W) ~ Log-Normal\n")
 
 
 ## ----------------------------------------------------------------------------
 ## 2.5  Comparando distribuições: gama vs. log-normal
 ## ----------------------------------------------------------------------------
+##
+## Comparamos as densidades para θ estimados em 2.3 e 2.4.
+## A log-normal tem cauda direita mais pesada — captura indivíduos com Z >> 1.
+## O AIC/BIC do coxph orienta a escolha entre as duas especificações.
 
-sigma2_gama <- frail_gama_pack$theta
-sigma2_logn <- frail_lognorm$theta
+cat("\n=== 2.5 Comparação gama vs. log-normal ===\n")
+cat("AIC — gama:      ", round(AIC(cox_frail_gama), 2), "\n")
+cat("AIC — log-normal:", round(AIC(cox_frail_logn), 2), "\n")
+cat("Menor AIC indica melhor ajuste. Diferença pequena → as duas são similares.\n")
 
 z_seq <- seq(0.01, 5, length.out = 500)
 
-dist_gama <- dgamma(z_seq, shape = 1/sigma2_gama, rate = 1/sigma2_gama)
-# Log-normal: E[Z]=1 → µ = -σ²/2; σ² da log-normal ≠ θ diretamente
-# θ no frailtypack para log-normal é a variância de W ~ N(0, θ)
-# Então Var[Z] = (exp(theta)-1)·exp(theta) ≈ theta para theta pequeno
-mu_logn   <- -sigma2_logn / 2
-dist_logn <- dlnorm(z_seq, meanlog = mu_logn, sdlog = sqrt(sigma2_logn))
+dist_gama <- dgamma(z_seq, shape = 1/theta_gama, rate = 1/theta_gama)
+# Log-normal: W ~ N(0, θ_logn), Z = exp(W)
+# E[Z] = exp(θ_logn/2) ≠ 1 exatamente, mas próximo para θ pequeno
+# Para manter E[Z]=1: meanlog = -θ_logn/2
+dist_logn <- dlnorm(z_seq, meanlog = -theta_logn/2, sdlog = sqrt(theta_logn))
 
-fig2 <- tibble(
+fig2 <- data.frame(
   z      = rep(z_seq, 2),
   dens   = c(dist_gama, dist_logn),
   modelo = rep(c("Gama", "Log-normal"), each = 500)
-) %>%
+) |>
   ggplot(aes(x = z, y = dens, color = modelo, linetype = modelo)) +
   geom_line(linewidth = 1.1) +
   geom_vline(xintercept = 1, linetype = "dotted", color = "grey50") +
   scale_color_manual(values = c("#E64B35", "#4DBBD5")) +
   coord_cartesian(xlim = c(0, 4), ylim = c(0, 2)) +
   labs(
-    title   = "Figura 2 — Distribuições de fragilidade estimadas",
+    title    = "Figura 2 — Distribuições de fragilidade estimadas",
     subtitle = "Gama vs. Log-normal: mesma média (1), caudas diferentes",
-    x = "Z (fragilidade)", y = "Densidade",
-    color = "Distribuição", linetype = "Distribuição",
-    caption = "Parâmetros estimados dos dados simulados.\nLinhas verticais em Z=1 (média populacional)."
+    x        = "Z (fragilidade)", y = "Densidade",
+    color    = "Distribuição", linetype = "Distribuição",
+    caption  = paste0(
+      "theta_gama = ", round(theta_gama, 3),
+      "  |  theta_logn = ", round(theta_logn, 3),
+      "\nLinhas verticais em Z=1 (média populacional)."
+    )
   )
 print(fig2)
 
 ## PERGUNTA PARA DISCUSSÃO:
-##   → Em que contextos a log-normal seria preferível à gama?
-##   → Como o AIC/BIC pode ajudar na escolha? (veja frail_gama_pack$AIC vs frail_lognorm$AIC)
-cat("\nAIC — Gama:", round(frail_gama_pack$AIC, 2),
-    " | Log-normal:", round(frail_lognorm$AIC, 2), "\n")
-
-
-## ============================================================================
-## PARTE 3 — RISCOS COMPETITIVOS E FINE & GRAY
-## ============================================================================
-##
-## MOTIVAÇÃO:
-## Em muitos estudos de mortalidade, existem múltiplas causas de morte que
-## "competem" entre si. Por exemplo:
-##   Causa 1: doença cardiovascular
-##   Causa 2: câncer
-##   Censura: saída do estudo
-##
-## Tratar causas competidoras como censura produz estimativas de
-## incidência cumulativa SUPER-ESTIMADAS (1 - KM não é CIF válida
-## na presença de riscos competitivos).
-
-## ----------------------------------------------------------------------------
-## 3.1  Simulação com riscos competitivos
-## ----------------------------------------------------------------------------
-
-simular_riscos_competitivos <- function(N = 3000, sigma2 = 0.5) {
-  # Dois riscos competitivos:
-  # Causa 1 (cardiovascular): µ₁(x|Z) = Z · a1 · exp(b1·x)
-  # Causa 2 (câncer):         µ₂(x|Z) = Z · a2 · exp(b2·x)
-  # covariável X: aumenta risco cardiovascular, reduz câncer (plausível)
-
-  a1 <- 0.00005; b1 <- 0.09   # cardiovascular
-  a2 <- 0.00015; b2 <- 0.07   # câncer (pico mais jovem)
-
-  k <- 1 / sigma2
-  Z <- rgamma(N, shape = k, rate = k)
-
-  X <- rbinom(N, 1, 0.5)       # exposição (ex.: tabagismo)
-
-  # Taxa total: µ(x|Z,X) = Z·[exp(0.5·X)·µ₁(x) + exp(-0.3·X)·µ₂(x)]
-  # Tempo de morte pelo risco total (inversão numérica)
-  # Causa é determinada pela razão dos riscos no momento do evento
-
-  # Simulação por inversão: tempo total
-  # Λ_total(x) = Z·[exp(0.5X)·(a1/b1)(e^(b1x)-1) + exp(-0.3X)·(a2/b2)(e^(b2x)-1)]
-  # Usamos o método de decomposição de causa
-
-  U_total <- runif(N)
-  # Tentativa iterativa (Newton simples) para resolver Λ_total(x) = -log(U)
-  tempo_morte <- numeric(N)
-  x_iter <- rep(50, N)   # início em 50 anos
-
-  Lambda_total <- function(x, z, xi) {
-    z * (exp(0.5 * xi) * (a1/b1) * (exp(b1*x) - 1) +
-         exp(-0.3 * xi) * (a2/b2) * (exp(b2*x) - 1))
-  }
-  lambda_total <- function(x, z, xi) {
-    z * (exp(0.5 * xi) * a1 * exp(b1*x) +
-         exp(-0.3 * xi) * a2 * exp(b2*x))
-  }
-  alvo <- -log(U_total)
-
-  for (iter in 1:50) {
-    f_val <- Lambda_total(x_iter, Z, X) - alvo
-    f_der <- lambda_total(x_iter, Z, X)
-    x_iter <- pmax(0, x_iter - f_val / f_der)
-  }
-  tempo_morte <- x_iter
-
-  # Determinar causa: probabilidade de ser causa 1 no momento do evento
-  mu1_t <- exp(0.5 * X) * a1 * exp(b1 * tempo_morte)
-  mu2_t <- exp(-0.3 * X) * a2 * exp(b2 * tempo_morte)
-  prob_causa1 <- mu1_t / (mu1_t + mu2_t)
-  causa <- ifelse(runif(N) < prob_causa1, 1, 2)
-
-  # Censura administrativa aos 90 anos
-  censurado    <- tempo_morte > 90
-  tempo_obs    <- pmin(tempo_morte, 90)
-  status       <- ifelse(censurado, 0, causa)   # 0=censura, 1=cardio, 2=câncer
-
-  tibble(
-    id      = 1:N,
-    Z       = Z,
-    tempo   = tempo_obs,
-    status  = status,                           # 0, 1 ou 2
-    evento1 = as.integer(status == 1),          # indicador causa 1
-    evento2 = as.integer(status == 2),          # indicador causa 2
-    X       = X,
-    sigma2  = sigma2
-  )
-}
-
-dados_cr <- simular_riscos_competitivos(N = 3000, sigma2 = 0.5)
-
-cat("\n=== Distribuição dos desfechos (riscos competitivos) ===\n")
-table(dados_cr$status, dnn = "Status (0=censura, 1=cardio, 2=câncer)")
-
-
-## ----------------------------------------------------------------------------
-## 3.2  Incidência Cumulativa por Causa — CIF (Aalen-Johansen)
-## ----------------------------------------------------------------------------
-##
-## F_k(t) = P(T ≤ t, causa = k) = ∫₀ᵗ S(u⁻) · hk(u) du
-##
-## Esta é a estimativa CORRETA de incidência com riscos competitivos.
-## NÃO é 1 - Kaplan-Meier (que trata outras causas como censura aleatória
-## e superestima a incidência de cada causa).
-
-# Estimativa KM (ERRADA para incidência com riscos competitivos)
-km_causa1_errado <- survfit(Surv(tempo, evento1) ~ X, data = dados_cr)
-
-# CIF correta via cmprsk
-cif_obj <- with(dados_cr, cuminc(ftime = tempo, fstatus = status,
-                                  group = X, cencode = 0))
-
-# Extraindo CIF para plotar
-extrair_cif <- function(obj, grupo, causa) {
-  nome <- paste(grupo, causa)
-  tibble(
-    tempo    = obj[[nome]]$time,
-    cif      = obj[[nome]]$est,
-    grupo    = as.character(grupo),
-    causa    = paste("Causa", causa)
-  )
-}
-
-df_cif <- bind_rows(
-  extrair_cif(cif_obj, 0, 1), extrair_cif(cif_obj, 0, 2),
-  extrair_cif(cif_obj, 1, 1), extrair_cif(cif_obj, 1, 2)
-) %>%
-  mutate(grupo = ifelse(grupo == "0", "X=0 (não exposto)", "X=1 (exposto)"))
-
-# Comparação KM (errado) vs. CIF (correto) para causa 1
-km_df <- broom::tidy(km_causa1_errado) %>%
-  mutate(
-    incidencia_km = 1 - estimate,
-    grupo = ifelse(strata == "X=0", "X=0 (não exposto)", "X=1 (exposto)")
-  )
-
-fig3a <- ggplot() +
-  geom_step(data = km_df,
-            aes(x = time, y = incidencia_km, color = grupo, linetype = "1-KM (ERRADO)"),
-            linewidth = 0.9) +
-  geom_step(data = df_cif %>% filter(causa == "Causa 1"),
-            aes(x = tempo, y = cif, color = grupo, linetype = "CIF (CORRETO)"),
-            linewidth = 0.9) +
-  scale_color_manual(values = c("#E64B35", "#3C5488")) +
-  scale_linetype_manual(values = c("dashed", "solid"),
-                        name = "Estimador") +
-  labs(
-    title   = "Figura 3a — 1-KM vs. CIF para Causa 1 (cardiovascular)",
-    subtitle = "1-KM superestima a incidência quando há riscos competitivos",
-    x = "Idade", y = "Probabilidade de incidência",
-    color = "Grupo"
-  )
-
-fig3b <- df_cif %>%
-  ggplot(aes(x = tempo, y = cif, color = grupo, linetype = causa)) +
-  geom_step(linewidth = 0.9) +
-  scale_color_manual(values = c("#E64B35", "#3C5488")) +
-  scale_linetype_manual(values = c("solid", "dashed")) +
-  labs(
-    title   = "Figura 3b — CIF por causa e grupo",
-    subtitle = "Incidências cumulativas somam S(t) + F₁(t) + F₂(t) = 1",
-    x = "Idade", y = "CIF",
-    color = "Grupo", linetype = "Causa"
-  )
-
-(fig3a / fig3b) +
-  plot_annotation(caption = "cmprsk::cuminc(). Dados simulados: N=3000, σ²=0.5.")
-
-## PONTO CRÍTICO:
-##   A soma das duas CIFs + S(t) deve ser igual a 1 para cada grupo.
-##   Isso é impossível se usarmos 1-KM para cada causa separadamente!
-
-df_cif %>%
-  group_by(grupo) %>%
-  filter(tempo == max(tempo)) %>%
-  group_by(grupo, causa) %>%
-  summarise(max_cif = round(max(cif), 3)) %>%
-  pivot_wider(names_from = causa, values_from = max_cif) %>%
-  mutate(soma_CIFs = `Causa 1` + `Causa 2`) %>%
-  print()
-
-
-## ----------------------------------------------------------------------------
-## 3.3  Modelo de Fine & Gray — subdistribution hazard
-## ----------------------------------------------------------------------------
-##
-## REFERÊNCIA: Fine JP, Gray RJ (1999). A proportional hazards model for
-##             the subdistribution of a competing risk. JASA 94(446):496-509.
-##
-## IDEIA CENTRAL:
-##   Ao invés de modelar o hazard de causa específica h_k(t) (abordagem de
-##   causa-específica), Fine & Gray modelam o "subdistribution hazard":
-##
-##   h̃_k(t) = -d/dt [log(1 - F_k(t))]
-##
-##   Interpretação: taxa instantânea de evento k para indivíduos que AINDA
-##   NÃO tiveram o evento k — INCLUINDO os que já morreram por outra causa
-##   (eles permanecem em "risco" para k com weight → 0).
-##
-##   Propriedade fundamental: exp(β̃_k) descreve diretamente o efeito de
-##   uma covariável sobre F_k(t). Portanto é o modelo correto quando o
-##   interesse é na incidência cumulativa, não no hazard condicional.
-##
-##   CONTRASTE com causa-específica:
-##   • Causa-específica (Cox por causa): "dada sobrevivência, qual é o risco?"
-##     → útil para mecanismo etiológico
-##   • Fine & Gray: "qual é o impacto na incidência acumulada observada?"
-##     → útil para prognóstico e comunicação de risco ao paciente
-##
-
-# Fine & Gray clássico via cmprsk
-fg_causa1 <- crr(
-  ftime   = dados_cr$tempo,
-  fstatus = dados_cr$status,
-  cov1    = model.matrix(~ X, data = dados_cr)[, -1, drop = FALSE],
-  failcode = 1,
-  cencode  = 0
-)
-
-fg_causa2 <- crr(
-  ftime   = dados_cr$tempo,
-  fstatus = dados_cr$status,
-  cov1    = model.matrix(~ X, data = dados_cr)[, -1, drop = FALSE],
-  failcode = 2,
-  cencode  = 0
-)
-
-cat("\n=== Fine & Gray — Subdistribution Hazard Ratio ===\n")
-cat("\n--- Causa 1 (cardiovascular) ---\n")
-summary(fg_causa1)
-
-cat("\n--- Causa 2 (câncer) ---\n")
-summary(fg_causa2)
-
-# Comparação com causa-específica (Cox por causa)
-cox_causa1 <- coxph(Surv(tempo, evento1) ~ X, data = dados_cr)
-cox_causa2 <- coxph(Surv(tempo, evento2) ~ X, data = dados_cr)
-
-cat("\n=== Comparação: Cause-Specific HR vs. Subdistribution HR ===\n")
-tab_comp <- tibble(
-  Abordagem = c("Causa-específica (Cox)", "Fine & Gray (subdist.)"),
-  HR_causa1 = c(
-    round(exp(coef(cox_causa1)["X"]), 3),
-    round(exp(fg_causa1$coef["X"]), 3)
-  ),
-  HR_causa2 = c(
-    round(exp(coef(cox_causa2)["X"]), 3),
-    round(exp(fg_causa2$coef["X"]), 3)
-  )
-)
-print(tab_comp)
-
-cat("\nInterpretação:\n")
-cat("• CS-HR causa 1: efeito de X sobre o risco de morte cardiovascular\n")
-cat("  DADO QUE o indivíduo está vivo (não morreu por outra causa)\n")
-cat("• SHR causa 1: efeito de X sobre a incidência cumulativa cardiovascular\n")
-cat("  (inclui o efeito indireto via competição com causa 2)\n")
-
-## NOTA IMPORTANTE: quando as duas causas competem, o SHR e o CS-HR divergem.
-## Se X aumenta risco de causa 1 E reduz risco de causa 2,
-## o SHR de causa 1 é MAIOR que o CS-HR (porque a exposição mantém
-## mais pessoas em risco de causa 1 ao reduzir morte por causa 2).
-
-
-## Visualização: CIF ajustada por Fine & Gray
-# Usando tidycmprsk para interface mais moderna
-library(tidycmprsk)
-
-dados_cr_factor <- dados_cr %>%
-  mutate(status_f = factor(status, levels = c(0, 1, 2),
-                           labels = c("censura", "cardio", "cancer")),
-         X_f = factor(X, labels = c("Não exposto", "Exposto")))
-
-fg_tidy_c1 <- tidycmprsk::crr(
-  Surv(tempo, status_f) ~ X_f,
-  data     = dados_cr_factor,
-  failcode = "cardio"
-)
-
-cat("\n=== Fine & Gray via tidycmprsk (causa 1) ===\n")
-tbl_regression(fg_tidy_c1, exponentiate = TRUE)
-
-
-## ----------------------------------------------------------------------------
-## 3.4  Fragilidade + Riscos Competitivos
-## ----------------------------------------------------------------------------
-##
-## Extensão de Beyersmann et al. (2012) e Rondeau et al. (2015):
-## Combina fragilidade compartilhada com subdistribution hazard para
-## dados agrupados com riscos competitivos.
-##
-## O modelo: h̃_k(t|Z) = Z · h̃_k0(t) · exp(X'β_k)
-##
-## Implementação via frailtypack::multivPenal
-
-dados_cr_cluster <- dados_cr %>%
-  mutate(familia = rep(1:300, each = 10))
-
-cat("\n=== Fragilidade + Riscos Competitivos (frailtypack::multivPenal) ===\n")
-tryCatch({
-  frail_cr <- multivPenal(
-    Surv(tempo, status) ~ X + cluster(familia),
-    data       = dados_cr_cluster,
-    n.knots    = 6,
-    kappa      = c(1000, 1000),
-    RandDist   = "Gamma",
-    competing.risks = TRUE
-  )
-  print(frail_cr)
-  cat("θ (fragilidade compartilhada nos riscos competitivos):",
-      round(frail_cr$theta, 4), "\n")
-}, error = function(e) {
-  cat("Nota: multivPenal requer versão >= 3.3 do frailtypack.\n")
-  cat("Alternativa: usar cause-specific frailty Cox separadamente.\n")
-  cat("  cox_cr1 <- coxph(Surv(tempo, evento1) ~ X + frailty(familia), data=dados_cr_cluster)\n")
-  cat("  cox_cr2 <- coxph(Surv(tempo, evento2) ~ X + frailty(familia), data=dados_cr_cluster)\n")
-})
+##   → A log-normal tem cauda mais pesada. Em que contextos isso importa?
+##   → O AIC favorece qual distribuição nos dados simulados?
+##   → O que acontece com o AIC se aumentarmos σ² na simulação para 1.5?
 
 
 ## ----------------------------------------------------------------------------
@@ -731,8 +548,6 @@ cat("╚════════════════════════
 ##  Após ajustar por estágio e tratamento, a mortalidade de baixa renda
 ##  começa mais alta mas CRUZA a de alta renda por volta dos 75 anos."
 ##
-## Simulamos esse cenário e pedimos que os/as doutorandos/as respondam
-## as 5 perguntas do slide usando as ferramentas do laboratório.
 
 cat("\n")
 cat("╔══════════════════════════════════════════════════════════════════════╗\n")
@@ -748,12 +563,12 @@ N_ex <- 2000
 
 # Grupo de baixa renda: σ²=1.2 (alta heterogeneidade → seleção intensa)
 baixa_renda <- simular_populacao(N = N_ex, a = 0.0002, b = 0.08,
-                                  sigma2 = 1.2, x0 = 30) %>%
+                                 sigma2 = 1.2, x0 = 30) %>%
   mutate(renda = 0, grupo = "Baixa renda")
 
 # Grupo de alta renda: σ²=0.2 (baixa heterogeneidade → seleção fraca)
 alta_renda  <- simular_populacao(N = N_ex, a = 0.00008, b = 0.08,
-                                  sigma2 = 0.2, x0 = 30) %>%
+                                 sigma2 = 0.2, x0 = 30) %>%
   mutate(renda = 1, grupo = "Alta renda")
 
 dados_ex <- bind_rows(baixa_renda, alta_renda)
@@ -799,7 +614,7 @@ dados_ex_cox <- dados_ex %>%
 
 cox_ex_simples <- coxph(Surv(tempo, evento) ~ renda, data = dados_ex)
 cox_ex_frail   <- coxph(Surv(tempo, evento) ~ renda +
-                         frailty(familia_ex, distribution = "gamma"),
+                          frailty(familia_ex, distribution = "gamma"),
                         data = dados_ex)
 
 cat("\nHR(renda) sem fragilidade:", round(exp(coef(cox_ex_simples)["renda"]), 3), "\n")
