@@ -1,8 +1,7 @@
 ################################################################################
 ##                                                                            ##
 ##   LABORATÓRIO: HETEROGENEIDADE, FRAGILIDADE E RISCOS COMPETITIVOS          ##
-##   Nível: Doutorado em Demografia — CEDEPLAR/UFMG                           ##
-##   Duração estimada: 1h30                                                   ##
+##   CEDEPLAR/UFMG                                                            ##
 ##   Referência principal: Vaupel, Manton & Stallard (1979); Vaupel &         ##
 ##   Yashin (1985); Fine & Gray (1999)                                        ##
 ##                                                                            ##
@@ -10,35 +9,6 @@
 ##   Data: Junho 2026                                                         ##
 ##                                                                            ##
 ################################################################################
-
-## ============================================================================
-## ESTRUTURA DO LABORATÓRIO
-## ============================================================================
-##
-##  PARTE 1 — Preparação e Conceitos (15 min)
-##    1.1  Instalação e carregamento de pacotes
-##    1.2  Simulação de população heterogênea com fragilidade gama
-##    1.3  Visualizando o efeito da heterogeneidade sobre a curva observada
-##
-##  PARTE 2 — Modelos de Fragilidade Univariados (30 min)
-##    2.1  Cox padrão (sem fragilidade): estimando o viés
-##    2.2  Fragilidade gama com risco de base paramétrico (Gompertz)
-##    2.3  Fragilidade gama semiparamétrica (pacote survival/frailtypack)
-##    2.4  Fragilidade log-normal
-##    2.5  Comparando distribuições de Z: gama vs. log-normal
-##
-##  PARTE 3 — Riscos Competitivos e Fine & Gray (30 min)
-##    3.1  Por que o modelo de Cox simples falha com riscos competitivos
-##    3.2  Incidência Cumulativa por Causa (CIF) — estimador Aalen-Johansen
-##    3.3  Modelo de Fine & Gray (subdistribution hazard)
-##    3.4  Fragilidade + Riscos Competitivos: o modelo de Beyersmann
-##    3.5  Interpretação e armadilhas
-##
-##  PARTE 4 — Exercício Integrador (15 min)
-##    Problema do câncer de mama (slide 44 da aula teórica)
-##
-## ============================================================================
-
 
 ## ============================================================================
 ## PARTE 1 — PREPARAÇÃO E CONCEITOS

@@ -7,358 +7,729 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
 <style>
-  /* ── Tipografia e paleta ─────────────────────────────────────────── */
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+/* ── Reset do font-size base do Reveal (padrão é 42px — muito grande) ── */
+.reveal { font-size: 18px; }
 
-  :root {
-    --azul:    #2C3E50;
-    --teal:    #1A7F6E;
-    --coral:   #C0392B;
-    --ouro:    #D4A843;
-    --cinza:   #6C757D;
-    --bg:      #FAFAF8;
-    --bg-dark: #1E2B38;
-    --mono:    'IBM Plex Mono', monospace;
-  }
-  .reveal { font-size: 18px }
-  .reveal { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg); }
-  .reveal h1, .reveal h2 { font-family: 'Playfair Display', serif; color: var(--azul); }
-  .reveal h3 { font-family: 'IBM Plex Sans', sans-serif; font-weight: 600;
-               color: var(--teal); text-transform: none; letter-spacing: 0; }
-  .reveal h1 { font-size: 1.9em; }
-  .reveal h2 { font-size: 1.45em; }
-  .reveal h3 { font-size: 1.05em; margin-bottom: .4em; }
-  .reveal p, .reveal li { font-size: .82em; line-height: 1.6; }
-  .reveal .slides section { text-align: left; padding: 0 2em; }
+/* ── Paleta ─────────────────────────────────────────────────────────── */
+:root {
+  --azul:  #2C3E50;
+  --teal:  #1A7F6E;
+  --coral: #C0392B;
+  --ouro:  #D4A843;
+  --cinza: #6C757D;
+  --bg:    #FAFAF8;
+  --dark:  #1E2B38;
+  --mono:  'IBM Plex Mono', monospace;
+}
 
-  /* ── Slide de título ─────────────────────────────────────────────── */
-  .titulo-slide { background: var(--bg-dark) !important; color: #ECF0F1 !important; }
-  .titulo-slide h1 { color: #ECF0F1 !important; font-size: 1.7em; line-height: 1.3; }
-  .titulo-slide h3 { color: var(--ouro) !important; font-size: .95em; }
-  .titulo-slide p  { color: #BDC3C7 !important; font-size: .75em; }
-  .titulo-slide .sub { color: var(--ouro); font-style: italic; font-size: .85em; margin-top: .5em; }
+/* ── Tipografia ─────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
 
-  /* ── Seção ───────────────────────────────────────────────────────── */
-  .secao-slide { background: var(--teal) !important; }
-  .secao-slide h2 { color: #fff !important; font-size: 1.8em; text-align: center;
-                    margin-top: .6em; }
-  .secao-slide p  { color: rgba(255,255,255,.8) !important; text-align: center; font-size: .9em; }
+.reveal,
+.reveal p,
+.reveal li,
+.reveal td,
+.reveal th { font-family: 'IBM Plex Sans', sans-serif; }
 
-  /* ── Boxes ───────────────────────────────────────────────────────── */
-  .box { border-left: 4px solid var(--teal); background: #EEF7F5;
-         padding: .6em .9em; margin: .5em 0; border-radius: 0 6px 6px 0; }
-  .box-coral { border-left-color: var(--coral); background: #FDF0EF; }
-  .box-ouro  { border-left-color: var(--ouro);  background: #FDF8EC; }
-  .box-azul  { border-left-color: var(--azul);  background: #EEF1F5; }
-  .box strong { color: var(--teal); }
-  .box-coral strong { color: var(--coral); }
-  .box-ouro  strong { color: #9A7420; }
-  .box-azul  strong { color: var(--azul); }
+.reveal h1, .reveal h2 {
+  font-family: 'Playfair Display', serif;
+  color: var(--azul);
+  text-transform: none;
+  letter-spacing: -.01em;
+}
+.reveal h3 {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 600;
+  color: var(--teal);
+  text-transform: none;
+  letter-spacing: 0;
+}
 
-  /* ── Código inline ───────────────────────────────────────────────── */
-  .reveal code { font-family: var(--mono); background: #EEF1F5;
-                 padding: .1em .35em; border-radius: 3px; font-size: .88em;
-                 color: var(--coral); }
-  pre.code-bloco { background: #1E2B38; color: #A8C7B8; font-family: var(--mono);
-                   font-size: .68em; padding: .8em 1em; border-radius: 6px;
-                   line-height: 1.5; overflow-x: auto; margin: .4em 0; }
-  pre.code-bloco .kw  { color: #7EC8E3; }
-  pre.code-bloco .fn  { color: #F0B429; }
-  pre.code-bloco .cm  { color: #6A8C78; font-style: italic; }
-  pre.code-bloco .st  { color: #E8A87C; }
+/* Tamanhos absolutos — não dependem do base do Reveal */
+.reveal h1 { font-size: 1.9em; line-height: 1.2; margin-bottom: .3em; }
+.reveal h2 { font-size: 1.3em; line-height: 1.25; margin-bottom: .35em; }
+.reveal h3 { font-size: .95em; margin-bottom: .3em; margin-top: .5em; }
+.reveal p  { font-size: .82em; line-height: 1.5; margin: .25em 0; }
+.reveal li { font-size: .82em; line-height: 1.5; }
 
-  /* ── Tabelas ─────────────────────────────────────────────────────── */
-  .reveal table { font-size: .74em; width: 100%; border-collapse: collapse; margin: .4em 0; }
-  .reveal table thead tr { background: var(--azul); color: #fff; }
-  .reveal table thead th { padding: .45em .7em; font-weight: 600; }
-  .reveal table tbody tr:nth-child(even) { background: #F0F3F6; }
-  .reveal table tbody td { padding: .4em .7em; border-bottom: 1px solid #DDE3EA; }
-  .reveal table tbody tr:hover { background: #E3EBF2; }
-  .td-dest { color: var(--coral); font-weight: 600; }
-  .td-ok   { color: var(--teal);  font-weight: 600; }
+/* Padding lateral menor para ganhar espaço */
+.reveal .slides section {
+  text-align: left;
+  padding: .5em 1.4em;
+  box-sizing: border-box;
+}
 
-  /* ── SVG / Figuras inline ────────────────────────────────────────── */
-  .fig-wrap { text-align: center; margin: .3em 0; }
-  .fig-wrap svg { max-width: 100%; }
-  .fig-cap { font-size: .62em; color: var(--cinza); text-align: center;
-             font-style: italic; margin-top: .2em; }
+/* Overflow visível — permite scroll quando necessário */
+.reveal .slides section {
+  overflow-y: auto;
+  max-height: 100%;
+}
 
-  /* ── Layout dois painéis ─────────────────────────────────────────── */
-  .cols { display: grid; gap: 1.2em; }
-  .cols-2 { grid-template-columns: 1fr 1fr; }
-  .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+/* ── Slide de título ─────────────────────────────────────────────────── */
+.titulo { background: var(--dark) !important; }
+.titulo h1 { color: #ECF0F1 !important; font-size: 1.65em; }
+.titulo h3 { color: var(--ouro) !important; font-size: .9em; }
+.titulo p  { color: #BDC3C7 !important; font-size: .75em; }
+.titulo .sub { color: var(--ouro); font-style: italic; font-size: .8em; }
 
-  /* ── Equação ─────────────────────────────────────────────────────── */
-  .eq { font-family: var(--mono); background: #F5F0E8; border-radius: 6px;
-        padding: .5em 1em; font-size: .82em; color: var(--azul);
-        border-left: 3px solid var(--ouro); margin: .4em 0; }
+/* ── Slide de seção ─────────────────────────────────────────────────── */
+.secao { background: var(--teal) !important; }
+.secao h2 { color: #fff !important; font-size: 1.7em; text-align: center; margin-top: .8em; }
+.secao p  { color: rgba(255,255,255,.85) !important; text-align: center; font-size: .85em; }
 
-  /* ── Destaque numérico ───────────────────────────────────────────── */
-  .num-grande { font-family: 'Playfair Display', serif; font-size: 2.4em;
-                color: var(--teal); line-height: 1; }
-  .num-label  { font-size: .72em; color: var(--cinza); display: block; margin-top: .1em; }
+/* ── Boxes ──────────────────────────────────────────────────────────── */
+.box {
+  border-left: 3px solid var(--teal);
+  background: #EEF7F5;
+  padding: .4em .75em;
+  margin: .35em 0;
+  border-radius: 0 5px 5px 0;
+  font-size: .78em;
+  line-height: 1.5;
+}
+.box-coral { border-left-color: var(--coral); background: #FDF0EF; }
+.box-ouro  { border-left-color: var(--ouro);  background: #FDF8EC; }
+.box-azul  { border-left-color: var(--azul);  background: #EEF1F5; }
+.box strong      { color: var(--teal);  }
+.box-coral strong { color: var(--coral); }
+.box-ouro  strong { color: #9A7420; }
+.box-azul  strong { color: var(--azul); }
 
-  /* ── Lista com ícones ────────────────────────────────────────────── */
-  .reveal ul { list-style: none; padding: 0; }
-  .reveal ul li::before { content: "→"; color: var(--teal); font-weight: 700;
-                           margin-right: .5em; }
-  .reveal ul.disc li::before { content: "•"; color: var(--cinza); }
+/* ── Código ─────────────────────────────────────────────────────────── */
+.reveal code {
+  font-family: var(--mono);
+  background: #EEF1F5;
+  padding: .05em .3em;
+  border-radius: 3px;
+  font-size: .83em;
+  color: var(--coral);
+}
+pre.cb {
+  background: #1E2B38;
+  color: #A8C7B8;
+  font-family: var(--mono);
+  font-size: .7em;
+  padding: .6em .9em;
+  border-radius: 5px;
+  line-height: 1.45;
+  margin: .3em 0;
+  white-space: pre-wrap;
+}
+pre.cb .kw { color: #7EC8E3; }
+pre.cb .fn { color: #F0B429; }
+pre.cb .cm { color: #6A8C78; font-style: italic; }
+pre.cb .st { color: #E8A87C; }
 
-  /* ── Nota de rodapé ──────────────────────────────────────────────── */
-  .nota { font-size: .6em; color: var(--cinza); border-top: 1px solid #DDE3EA;
-          padding-top: .4em; margin-top: .8em; font-style: italic; }
+/* ── Tabelas ─────────────────────────────────────────────────────────── */
+.reveal table {
+  font-size: .73em;
+  width: 100%;
+  border-collapse: collapse;
+  margin: .35em 0;
+}
+.reveal table thead tr { background: var(--azul); color: #fff; }
+.reveal table thead th { padding: .35em .6em; font-weight: 600; }
+.reveal table tbody tr:nth-child(even) { background: #F0F3F6; }
+.reveal table tbody td { padding: .3em .6em; border-bottom: 1px solid #DDE3EA; }
+.td-r { color: var(--coral); font-weight: 600; }
+.td-g { color: var(--teal);  font-weight: 600; }
 
-  /* ── Progress bar ────────────────────────────────────────────────── */
-  .reveal .progress { background: rgba(0,0,0,.1); }
-  .reveal .progress span { background: var(--teal); }
+/* ── Layout ──────────────────────────────────────────────────────────── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr;     gap: 1em; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .8em; }
+
+/* ── Equação ─────────────────────────────────────────────────────────── */
+.eq {
+  font-family: var(--mono);
+  background: #F5F0E8;
+  border-left: 3px solid var(--ouro);
+  border-radius: 0 5px 5px 0;
+  padding: .35em .8em;
+  font-size: .75em;
+  color: var(--azul);
+  margin: .3em 0;
+  line-height: 1.5;
+}
+
+/* ── Figuras ─────────────────────────────────────────────────────────── */
+.fw { text-align: center; }
+.fw svg { max-width: 100%; height: auto; }
+.fc { font-size: .58em; color: var(--cinza); text-align: center;
+      font-style: italic; margin-top: .15em; }
+
+/* ── Nota rodapé ─────────────────────────────────────────────────────── */
+.nota {
+  font-size: .58em;
+  color: var(--cinza);
+  border-top: 1px solid #DDE3EA;
+  padding-top: .3em;
+  margin-top: .5em;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* ── Números grandes ─────────────────────────────────────────────────── */
+.nb { font-family: 'Playfair Display', serif; font-size: 2em;
+      color: var(--teal); line-height: 1; }
+.nl { font-size: .68em; color: var(--cinza); display: block; }
+
+/* ── Listas ──────────────────────────────────────────────────────────── */
+.reveal ul { list-style: none; padding: 0; margin: .2em 0; }
+.reveal ul li { padding-left: 1.1em; position: relative; }
+.reveal ul li::before {
+  content: "→";
+  color: var(--teal);
+  font-weight: 700;
+  position: absolute; left: 0;
+}
+.reveal ul.disc li::before { content: "•"; color: var(--cinza); font-weight: 400; }
+
+/* Progress bar */
+.reveal .progress span { background: var(--teal); }
+
+/* ── Canvas interativo dentro do Reveal ───────────────────────────── */
+.reveal canvas { display: block; }
+.cbox { position: relative; width: 100%; }
 </style>
 </head>
 <body>
 <div class="reveal">
 <div class="slides">
 
-<!-- ══════════════════════════════════════════════════════════════════
-     SLIDE 1 — TÍTULO
-════════════════════════════════════════════════════════════════════ -->
-<section class="titulo-slide" data-background-color="#1E2B38">
-  <h1>Heterogeneidade, Fragilidade<br>e Riscos Competitivos</h1>
-  <p class="sub">Resultados do Laboratório Fragilidade</p>
-  <br>
-  <h3>Prof. Vanessa Di Lego</h3>
-  <p>CEDEPLAR / UFMG · Dept. Demografia<br>
-  Junho 2026 · <code style="background:#2C3E50;color:#A8C7B8">survival · frailtypack · finegray()</code></p>
+<!-- ═══════════════════════════════════════════════════
+     1 — TÍTULO
+═══════════════════════════════════════════════════ -->
+<section class="titulo" data-background-color="#1E2B38">
+  <div style="padding-top:1.5em">
+    <h1>Heterogeneidade, Fragilidade<br>e Riscos Competitivos</h1>
+    <p class="sub">Resultados do Laboratório · CEDEPLAR/UFMG</p>
+    <br>
+    <h3>Prof. Vanessa Di Lego</h3>
+    <p style="color:#BDC3C7">
+      Dept. Demografia Indicadores Avançados de Mortalidade · Junho 2026<br>
+      <code style="background:rgba(255,255,255,.12);color:#A8C7B8">survival &nbsp;·&nbsp; frailtypack &nbsp;·&nbsp; finegray()</code>
+    </p>
+  </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════════════════════
-     SLIDE 2 — ROTEIRO
-════════════════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════
+     2 — ROTEIRO
+═══════════════════════════════════════════════════ -->
 <section>
-  <h2>Roteiro desta apresentação</h2>
-  <div class="cols cols-2" style="margin-top:.8em">
+  <h2>Roteiro</h2>
+  <div class="g2" style="margin-top:.5em">
     <div>
       <h3>Parte 1 — Dados simulados</h3>
       <ul>
-        <li>Desaceleração de µ̄(x) com heterogeneidade</li>
+        <li>Desaceleração de µ̄(x) com σ² crescente</li>
         <li>Viés de atenuação no Cox</li>
-        <li>Gama vs. log-normal: AIC</li>
-        <li>Z̄(x) e o plateau teórico</li>
+        <li>Gama vs. log-normal: AIC e caudas</li>
+        <li>Z̄(x) e o plateau teórico b/σ²</li>
       </ul>
     </div>
     <div>
       <h3>Parte 2 — Dados reais</h3>
       <ul>
-        <li><strong>mgus2</strong>: 1-KM vs. CIF · Fine & Gray</li>
-        <li><strong>pbc</strong>: fragilidade por estágio</li>
-        <li><strong>veteran</strong>: efeito fixo vs. aleatório</li>
+        <li><strong>mgus2</strong> — 1-KM vs. CIF · Fine &amp; Gray</li>
+        <li><strong>pbc</strong> — fragilidade por estágio clínico</li>
+        <li><strong>veteran</strong> — efeito fixo vs. aleatório</li>
         <li>Guia de escolha de modelo</li>
       </ul>
     </div>
   </div>
-  <div class="box-azul box" style="margin-top:1em">
-    <strong>Todos os resultados numéricos foram validados</strong> com os scripts
-    <code>lab1_fragilidade.R</code> e <code>lab2_dados_reais.R</code>
-    disponíveis no repositório.
+  <div class="box-azul box" style="margin-top:.8em">
+    <strong>Todos os resultados</strong> foram validados com
+    <code>lab1_fragilidade.R</code> e <code>lab2_dados_reais.R</code>.
+    Datasets: <code>survival::mgus2</code> · <code>survival::pbc</code> · <code>survival::veteran</code>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════════════════════
-     SEÇÃO A — SIMULAÇÕES
-════════════════════════════════════════════════════════════════════ -->
-<section class="secao-slide" data-background-color="#1A7F6E">
-  <h2>Parte 1<br>Dados Simulados</h2>
-  <p>N = 5.000 por grupo · µ₀(x) = 0,0001 · e<sup>0,09x</sup> · censura aos 100 anos</p>
+<!-- ═══════════════════════════════════════════════════
+     SEÇÃO A
+═══════════════════════════════════════════════════ -->
+<section class="secao" data-background-color="#1A7F6E">
+  <h2>Parte 1 · Dados Simulados</h2>
+  <p>N = 5.000 por grupo &nbsp;·&nbsp; µ₀(x) = 0,0001 · e<sup>0,09x</sup> &nbsp;·&nbsp; censura aos 100 anos</p>
 </section>
 
-<!-- ── Slide 3: O problema da heterogeneidade ── -->
+<!-- ═══════════════════════════════════════════════════
+     3 — DESACELERAÇÃO
+═══════════════════════════════════════════════════ -->
 <section>
-  <h2>O efeito da heterogeneidade sobre µ̄(x)</h2>
-  <div class="cols cols-2">
+  <h2>Heterogeneidade desacelera µ̄(x)</h2>
+  <div class="g2">
     <div>
-      <p>Simulamos três populações com <strong>fragilidade gama</strong>
-      — mesmo risco de base Gompertziano, σ² diferente:</p>
-      <table>
-        <thead><tr><th>σ²</th><th>E[Z]</th><th>Var[Z]</th><th>e₀ obs.</th></tr></thead>
+      <p>Três populações com <strong>fragilidade gama</strong> — mesmo µ₀(x), σ² diferente:</p>
+      <table style="margin-top:.4em">
+        <thead><tr><th>σ²</th><th>E[Z]</th><th>Var[Z]</th><th>e₀ simulada</th></tr></thead>
         <tbody>
-          <tr><td>≈ 0 (homog.)</td><td>1,00</td><td>≈ 0</td><td>77,3</td></tr>
-          <tr><td>0,5</td><td>1,00</td><td>0,50</td><td>74,1</td></tr>
-          <tr><td>1,5</td><td>1,00</td><td>1,50</td><td>70,6</td></tr>
+          <tr><td>≈ 0 (homogênea)</td><td>1,00</td><td>≈ 0</td><td style="color:#C0392B;font-weight:600">69,3</td></tr>
+          <tr><td>0,5</td><td>1,00</td><td>0,50</td><td>72,3</td></tr>
+          <tr><td>1,5</td><td>1,00</td><td>1,50</td><td style="color:#1A7F6E;font-weight:600">79,4</td></tr>
         </tbody>
       </table>
-      <div class="box" style="margin-top:.6em">
-        <strong>Resultado central:</strong> E[Z] é idêntico nos três grupos,
-        mas a e₀ observada cai com σ² — porque a seleção elimina preferencialmente
-        os frágeis, deixando Z̄(x) decrescente.
+      <div class="box-coral box" style="margin-top:.5em">
+        <strong>Resultado contraintuitivo:</strong> e₀ <em>sobe</em> com σ²,
+        não cai. E[Z] é idêntico nos três grupos — mas maior σ² implica
+        e₀ populacional maior. Isso é a <strong>desigualdade de Jensen</strong>
+        — explicada nos próximos slides.
       </div>
+      <div class="eq">Z̄(x) = 1 / [1 + σ² · Λ₀(x)] &nbsp;→&nbsp; plateau: b/σ²</div>
     </div>
     <div>
-      <!-- SVG: curvas de risco estilizadas -->
-      <div class="fig-wrap">
-        <svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+      <div class="fw">
+        <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-              <path d="M0,0 L6,3 L0,6 Z" fill="#6C757D"/>
+            <marker id="a1" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+              <path d="M0,0 L5,2.5 L0,5Z" fill="#6C757D"/>
             </marker>
           </defs>
-          <!-- Eixos -->
-          <line x1="40" y1="180" x2="300" y2="180" stroke="#6C757D" stroke-width="1.2" marker-end="url(#arr)"/>
-          <line x1="40" y1="20"  x2="40"  y2="185" stroke="#6C757D" stroke-width="1.2" marker-end="url(#arr)"/>
-          <text x="295" y="195" font-size="10" fill="#6C757D">Idade</text>
-          <text x="42" y="15"   font-size="10" fill="#6C757D">log µ̄(x)</text>
-          <!-- Gompertz base (tracejado) -->
-          <polyline points="50,160 100,130 150,95 200,58 250,28" fill="none"
-                    stroke="#6C757D" stroke-width="1.4" stroke-dasharray="5,3"/>
-          <text x="252" y="26" font-size="9" fill="#6C757D">µ₀(x) individual</text>
+          <line x1="38" y1="170" x2="282" y2="170" stroke="#6C757D" stroke-width="1.2" marker-end="url(#a1)"/>
+          <line x1="38" y1="18"  x2="38"  y2="174" stroke="#6C757D" stroke-width="1.2" marker-end="url(#a1)"/>
+          <text x="278" y="183" font-size="9" fill="#6C757D">Idade</text>
+          <text x="40"  y="14"  font-size="9" fill="#6C757D">log µ̄(x)</text>
+          <!-- base -->
+          <polyline points="48,158 100,124 152,88 204,54 256,26"
+            fill="none" stroke="#AAAAAA" stroke-width="1.2" stroke-dasharray="5,3"/>
+          <text x="258" y="24" font-size="8" fill="#AAAAAA">µ₀(x)</text>
           <!-- σ²≈0 -->
-          <polyline points="50,162 100,132 150,98 200,64 250,36" fill="none"
-                    stroke="#2C3E50" stroke-width="2"/>
-          <text x="252" y="38" font-size="9" fill="#2C3E50">σ²≈0</text>
+          <polyline points="48,160 100,126 152,92 204,60 256,34"
+            fill="none" stroke="#2C3E50" stroke-width="2"/>
+          <text x="258" y="36" font-size="8" fill="#2C3E50">σ²≈0</text>
           <!-- σ²=0.5 -->
-          <polyline points="50,162 100,137 150,107 200,80 250,62" fill="none"
-                    stroke="#1A7F6E" stroke-width="2"/>
-          <text x="252" y="64" font-size="9" fill="#1A7F6E">σ²=0,5</text>
+          <polyline points="48,160 100,132 152,106 204,82 256,64"
+            fill="none" stroke="#1A7F6E" stroke-width="2"/>
+          <text x="258" y="66" font-size="8" fill="#1A7F6E">σ²=0,5</text>
           <!-- σ²=1.5 -->
-          <polyline points="50,162 100,142 150,120 200,103 250,92" fill="none"
-                    stroke="#C0392B" stroke-width="2"/>
-          <text x="252" y="94" font-size="9" fill="#C0392B">σ²=1,5</text>
-          <!-- Labels eixo x -->
-          <text x="48" y="193" font-size="9" fill="#6C757D">40</text>
-          <text x="96" y="193" font-size="9" fill="#6C757D">55</text>
-          <text x="146" y="193" font-size="9" fill="#6C757D">70</text>
-          <text x="196" y="193" font-size="9" fill="#6C757D">85</text>
-          <text x="246" y="193" font-size="9" fill="#6C757D">100</text>
+          <polyline points="48,160 100,140 152,122 204,108 256,98"
+            fill="none" stroke="#C0392B" stroke-width="2"/>
+          <text x="258" y="100" font-size="8" fill="#C0392B">σ²=1,5</text>
+          <text x="46" y="183" font-size="8" fill="#6C757D">40</text>
+          <text x="96" y="183" font-size="8" fill="#6C757D">55</text>
+          <text x="148" y="183" font-size="8" fill="#6C757D">70</text>
+          <text x="200" y="183" font-size="8" fill="#6C757D">85</text>
+          <text x="250" y="183" font-size="8" fill="#6C757D">100</text>
         </svg>
-        <p class="fig-cap">µ̄(x) desacelera mesmo com µ₀(x) Gompertziano crescente.<br>
-        Maior σ² → maior seleção → plateau mais baixo.</p>
+        <p class="fc">µ̄(x) observada fica abaixo de µ₀(x) e desacelera com σ².<br>
+        Vaupel &amp; Yashin (1985)</p>
       </div>
     </div>
   </div>
-  <p class="nota">Referência: Vaupel & Yashin (1985). <em>The American Statistician</em> 39(3):176–185. |
-  Fórmula do plateau: b/σ² [slide 13 da aula teórica].</p>
 </section>
 
-<!-- ── Slide 4: Viés de atenuação ── -->
+
+<!-- ═══════════════════════════════════════════════════
+     3b — JENSEN: O PARADOXO
+═══════════════════════════════════════════════════ -->
+<section>
+  <h2>O paradoxo: por que maior σ² implica maior e₀?</h2>
+  <div class="g2">
+    <div>
+      <h3>e₀ condicional em Z é convexa</h3>
+      <p>Para um indivíduo com fragilidade Z fixa,
+      sua expectativa de vida é:</p>
+      <div class="eq" style="margin:.4em 0">
+        e₀(Z) = x₀ + ∫ exp(−Z·[Λ₀(x)−Λ₀(x₀)]) dx
+      </div>
+      <p>Calculando para cada valor de Z com µ₀(x) = 0,0001·e<sup>0,09x</sup>:</p>
+      <table style="margin-top:.4em">
+        <thead><tr><th>Z</th><th>e₀(Z)</th><th>Variação vs. Z=1</th></tr></thead>
+        <tbody>
+          <tr><td>0,25</td><td class="td-g">85,1 anos</td><td class="td-g">+14,3</td></tr>
+          <tr><td>0,50</td><td class="td-g">77,9 anos</td><td class="td-g">+7,1</td></tr>
+          <tr><td style="font-weight:600">1,00</td><td style="font-weight:600">70,8 anos</td><td>referência</td></tr>
+          <tr><td>1,50</td><td class="td-r">66,9 anos</td><td class="td-r">−3,9</td></tr>
+          <tr><td>2,00</td><td class="td-r">64,2 anos</td><td class="td-r">−6,6</td></tr>
+          <tr><td>3,00</td><td class="td-r">60,6 anos</td><td class="td-r">−10,2</td></tr>
+        </tbody>
+      </table>
+      <div class="box-ouro box" style="margin-top:.45em">
+        <strong>Assimetria crucial:</strong> a <em>vantagem</em> de Z=0,25 (+14,3 anos)
+        é muito maior que a <em>desvantagem</em> de Z=1,75 (−5,4 anos).
+        Isso é a assinatura de uma função convexa.
+      </div>
+    </div>
+    <div>
+      <h3>A curva e₀(Z)</h3>
+      <div class="fw">
+        <svg viewBox="0 0 290 210" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="aj1" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+              <path d="M0,0 L5,2.5 L0,5Z" fill="#6C757D"/>
+            </marker>
+          </defs>
+          <line x1="32" y1="185" x2="272" y2="185" stroke="#6C757D" stroke-width="1" marker-end="url(#aj1)"/>
+          <line x1="32" y1="12"  x2="32"  y2="188" stroke="#6C757D" stroke-width="1" marker-end="url(#aj1)"/>
+          <text x="267" y="196" font-size="8" fill="#6C757D">Z</text>
+          <text x="34"  y="10"  font-size="8" fill="#6C757D">e₀(Z)</text>
+          <!-- escala: Z 0..3 → x 32..262 (230px); e0 55..90 → y 185..15 (170px) -->
+          <!-- Z→x: x = 32 + Z*(230/3)  e0→y: y = 185 - (e0-55)*(170/35) -->
+          <!-- Curva e0(Z) convexa — pontos calculados -->
+          <!-- Z=0.1→e0≈89: x=39,  y=185-(89-55)*170/35=185-165=20 -->
+          <!-- Z=0.25→85.1: x=51,  y=185-(85.1-55)*4.86=185-146=39 -->
+          <!-- Z=0.5→77.9:  x=70,  y=185-(77.9-55)*4.86=185-111=74 -->
+          <!-- Z=0.75→73.7: x=89,  y=185-(73.7-55)*4.86=185-91=94 -->
+          <!-- Z=1.0→70.8:  x=109, y=185-(70.8-55)*4.86=185-77=108 -->
+          <!-- Z=1.5→66.9:  x=147, y=185-(66.9-55)*4.86=185-58=127 -->
+          <!-- Z=2.0→64.2:  x=185, y=185-(64.2-55)*4.86=185-45=140 -->
+          <!-- Z=2.5→62.2:  x=224, y=185-(62.2-55)*4.86=185-35=150 -->
+          <!-- Z=3.0→60.6:  x=262, y=185-(60.6-55)*4.86=185-27=158 -->
+          <polyline
+            points="39,20 51,39 70,74 89,94 109,108 147,127 185,140 224,150 262,158"
+            fill="none" stroke="#2C3E50" stroke-width="2.2"/>
+          <!-- Z=1 vertical -->
+          <line x1="109" y1="108" x2="109" y2="185" stroke="#6C757D" stroke-width=".8" stroke-dasharray="3,2"/>
+          <text x="104" y="198" font-size="8" fill="#6C757D">Z=1</text>
+          <!-- Ponto Z=1, e0=70.8 -->
+          <circle cx="109" cy="108" r="4.5" fill="#C0392B"/>
+          <text x="113" y="105" font-size="8" fill="#C0392B">e₀(1)=70,8</text>
+          <!-- Ponto Z=0.3 -->
+          <circle cx="55" cy="50" r="3.5" fill="#1A7F6E"/>
+          <text x="59"  y="48" font-size="8" fill="#1A7F6E">Z=0,3</text>
+          <!-- Ponto Z=1.7 -->
+          <circle cx="162" cy="132" r="3.5" fill="#1A7F6E"/>
+          <text x="166" y="130" font-size="8" fill="#1A7F6E">Z=1,7</text>
+          <!-- Corda entre Z=0.3 e Z=1.7 (linha reta) -->
+          <line x1="55" y1="50" x2="162" y2="132" stroke="#D4A843" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <!-- Ponto médio da corda em x=(55+162)/2=108.5, y=(50+132)/2=91 -->
+          <circle cx="108" cy="91" r="3.5" fill="#D4A843"/>
+          <text x="68" y="87" font-size="7.5" fill="#9A7420">média da corda=74,5</text>
+          <!-- Seta indicando gap -->
+          <line x1="109" y1="91" x2="109" y2="108" stroke="#9A7420" stroke-width="1.2" stroke-dasharray="2,2"/>
+          <text x="112" y="100" font-size="7" fill="#9A7420">+3,7 anos</text>
+          <!-- Eixo y labels -->
+          <text x="14" y="112" font-size="8" fill="#6C757D">70</text>
+          <text x="14" y="78"  font-size="8" fill="#6C757D">78</text>
+          <text x="14" y="44"  font-size="8" fill="#6C757D">85</text>
+          <!-- Eixo x labels -->
+          <text x="30"  y="197" font-size="8" fill="#6C757D">0</text>
+          <text x="105" y="197" font-size="8" fill="#6C757D">1</text>
+          <text x="182" y="197" font-size="8" fill="#6C757D">2</text>
+          <text x="258" y="197" font-size="8" fill="#6C757D">3</text>
+        </svg>
+        <p class="fc">A curva e₀(Z) é convexa: o ganho de Z=0,3 (+14,3 anos)
+        supera a perda de Z=1,7 (−5,4 anos).<br>
+        A corda (linha amarela) fica <em>acima</em> da curva — sinal de convexidade.</p>
+      </div>
+    </div>
+  </div>
+  <p class="nota">Calculado com µ₀(x) = 0,0001·e<sup>0,09x</sup>, x₀ = 40 anos. e₀(Z) via integração numérica.</p>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     3c — JENSEN: A DESIGUALDADE
+═══════════════════════════════════════════════════ -->
+<section>
+  <h2>Desigualdade de Jensen: E[e₀(Z)] &gt; e₀(E[Z])</h2>
+  <div class="g2">
+    <div>
+      <h3>O teorema</h3>
+      <p>Para qualquer função convexa f e variável aleatória Z:</p>
+      <div class="eq" style="margin:.4em 0; font-size:.8em">
+        E[f(Z)] ≥ f(E[Z]) &nbsp;&nbsp; [Desigualdade de Jensen]<br>
+        <br>
+        Aqui: &nbsp; f(·) = e₀(·) &nbsp; [convexa, como vimos]<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; E[Z] = 1 &nbsp; [normalização da fragilidade]<br>
+        <br>
+        ∴ &nbsp; E[e₀(Z)] ≥ e₀(1) = 70,8 anos
+      </div>
+      <div class="box" style="margin-top:.5em">
+        <strong>Intuição:</strong> o "ganho" que os indivíduos robustos (baixo Z)
+        trazem para a média é <em>proporcionalmente maior</em> do que a "perda"
+        trazida pelos frágeis (alto Z). Isso é exatamente o que a convexidade
+        de e₀(Z) garante.
+      </div>
+      <div class="box-ouro box" style="margin-top:.4em">
+        <strong>Quanto maior σ², maior o ganho Jensen:</strong><br>
+        σ²=0,00 → E[e₀(Z)] = 70,8 &nbsp; (= e₀(1), sem ganho)<br>
+        σ²=0,10 → E[e₀(Z)] ≈ 71,4 &nbsp; (+0,6 anos)<br>
+        σ²=0,50 → E[e₀(Z)] ≈ 73,8 &nbsp; (+3,0 anos)<br>
+        σ²=1,00 → E[e₀(Z)] ≈ 77,1 &nbsp; (+6,3 anos)<br>
+        σ²=1,50 → E[e₀(Z)] ≈ 80,8 &nbsp; (+10,0 anos)<br>
+        σ²=2,00 → E[e₀(Z)] ≈ 84,7 &nbsp; (+13,9 anos)
+      </div>
+    </div>
+    <div>
+      <h3>Os dois fenômenos coexistem sem contradição</h3>
+      <div class="box-coral box">
+        <strong>µ̄(x) desacelera com σ² e atinge plateau mais baixo</strong><br>
+        ↓ risco observado em idades avançadas<br>
+        Os frágeis morreram — sobreviventes são robustos
+      </div>
+      <div class="box" style="margin-top:.4em">
+        <strong>E[e₀(Z)] sobe com σ²</strong><br>
+        ↑ expectativa de vida média da população<br>
+        Jensen: ganhos dos robustos superam perdas dos frágeis
+      </div>
+      <div class="box-azul box" style="margin-top:.4em">
+        <strong>São duas faces do mesmo mecanismo:</strong> a seleção de
+        sobreviventes que reduz µ̄(x) em idades avançadas é precisamente
+        o processo que eleva E[e₀(Z)] — os frágeis morrem cedo,
+        "liberando" espaço para que a média seja puxada pelos robustos.
+      </div>
+      <div class="box-ouro box" style="margin-top:.4em">
+        <strong>Erro a evitar:</strong> interpretar o plateau mais baixo
+        como "menos mortalidade" e confundir com e₀ menor. O plateau
+        descreve a <em>composição dos sobreviventes</em>, não a expectativa
+        de vida da população original.
+      </div>
+    </div>
+  </div>
+  <p class="nota">
+    Valores analíticos via E[e₀(Z)] = ∫₀^∞ e₀(z)·f_Gama(z;1/σ²,1/σ²) dz &nbsp;·&nbsp;
+    Resultado de convexidade discutido em Vaupel &amp; Yashin (1985) e Finkelstein (2008).
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     3d — JENSEN: DEMONSTRAÇÃO INTERATIVA
+═══════════════════════════════════════════════════ -->
+<section>
+  <h2>Demonstração: ganho Jensen cresce com σ²</h2>
+  <div class="g2" style="align-items:start">
+    <div>
+      <p style="font-size:.78em">Arraste σ² e observe como a distribuição gama
+      de Z se torna mais dispersa — e o ganho Jensen aumenta.</p>
+      <div style="display:flex;align-items:center;gap:.6em;margin:.5em 0">
+        <span style="font-size:.75em;color:var(--cinza);width:3em">σ²</span>
+        <input type="range" id="rv-sig2" min="0.05" max="2.5" step="0.05" value="0.5"
+               style="flex:1;accent-color:#1A7F6E">
+        <span id="rv-sig2v" style="font-size:.8em;font-weight:600;min-width:2.5em;text-align:right">0.50</span>
+      </div>
+      <div class="g2" style="gap:.4em;margin-top:.5em">
+        <div style="background:#EEF7F5;border-radius:6px;padding:.5em .7em">
+          <div style="font-size:.65em;color:var(--cinza)">e₀(Z=1) — homogênea</div>
+          <div style="font-size:1.3em;font-weight:600;color:var(--azul)">70,8 anos</div>
+        </div>
+        <div style="background:#EEF7F5;border-radius:6px;padding:.5em .7em">
+          <div style="font-size:.65em;color:var(--cinza)">E[e₀(Z)] — heterogênea</div>
+          <div id="rv-e0het" style="font-size:1.3em;font-weight:600;color:var(--teal)">—</div>
+        </div>
+        <div style="background:#FDF8EC;border-radius:6px;padding:.5em .7em">
+          <div style="font-size:.65em;color:var(--cinza)">Ganho Jensen</div>
+          <div id="rv-gain" style="font-size:1.3em;font-weight:600;color:var(--coral)">—</div>
+        </div>
+        <div style="background:#EEF1F5;border-radius:6px;padding:.5em .7em">
+          <div style="font-size:.65em;color:var(--cinza)">Z̄(80 anos)</div>
+          <div id="rv-zbar" style="font-size:1.3em;font-weight:600;color:var(--azul)">—</div>
+        </div>
+      </div>
+      <div class="box" style="margin-top:.6em;font-size:.74em">
+        <strong>Note:</strong> Z̄(80) cai com σ² (seleção intensa) enquanto
+        E[e₀(Z)] sobe com σ² (Jensen). Os dois movem-se em direções
+        opostas — são fenômenos distintos sobre a mesma população.
+      </div>
+    </div>
+    <div>
+      <div class="cbox" style="height:340px">
+        <canvas id="rv-cvs" role="img"
+          aria-label="Gráfico mostrando curva convexa de e0(Z) com distribuição gama sobreposta">
+        </canvas>
+      </div>
+      <p class="fc" style="margin-top:.2em">
+        Curva azul: e₀(Z). Barras verdes: distribuição gama(σ²).
+        Ponto vermelho: e₀(1). Ponto verde: E[e₀(Z)] — sempre acima.
+      </p>
+    </div>
+  </div>
+  <p class="nota">
+    Jensen (1906) · e₀(Z) calculada via integração numérica de S̄(x|Z) · Chart.js
+  </p>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script>
+  (function(){
+    var A=0.0001,B=0.09,X0=40;
+    function lgamma(z){
+      var c=[76.18009172947146,-86.50532032941677,24.01409824083091,
+             -1.231739572450155,1.20865097386618e-3,-5.3952393849535e-6];
+      var y=z,x=z,tmp=x+5.5;tmp-=(x+0.5)*Math.log(tmp);
+      var s=1.000000000190015;for(var j=0;j<6;j++)s+=c[j]/++y;
+      return -tmp+Math.log(2.5066282746310005*s/x);
+    }
+    function gPDF(k,x){if(x<=0)return 0;return Math.exp((k-1)*Math.log(x)-k*x+k*Math.log(k)-lgamma(k));}
+    function e0Z(Z){var dx=1,s=0;for(var i=0;i<160;i++){var x=X0+i*dx;var L0x=(A/B)*(Math.exp(B*x)-1),L0x0=(A/B)*(Math.exp(B*X0)-1);s+=Math.exp(-Z*(L0x-L0x0))*dx;}return X0+s;}
+    function Zbar80(s2){return 1/(1+s2*(A/B)*(Math.exp(B*80)-1-(A/B)*(Math.exp(B*X0)-1)*0));}
+    var ZPTS=[];for(var i=0;i<60;i++)ZPTS.push(+(0.1+i*0.08).toFixed(3));
+    var E0C=ZPTS.map(function(z){return +e0Z(z).toFixed(2);});
+    var E0Z1=+e0Z(1).toFixed(2);
+    function e0het(s2){var k=1/s2,n=0,d=0;ZPTS.forEach(function(z,i){var p=gPDF(k,z);n+=E0C[i]*p;d+=p;});return +(n/d).toFixed(2);}
+    var cht=null;
+    function upd(){
+      var s2=+document.getElementById('rv-sig2').value;
+      document.getElementById('rv-sig2v').textContent=s2.toFixed(2);
+      var eh=e0het(s2),g=+(eh-E0Z1).toFixed(1);
+      document.getElementById('rv-e0het').textContent=eh.toFixed(1)+' anos';
+      document.getElementById('rv-gain').textContent='+'+g+' anos';
+      var zb=1/(1+s2*(A/B)*(Math.exp(B*80)-Math.exp(B*X0)));
+      document.getElementById('rv-zbar').textContent=zb.toFixed(3);
+      var k=1/s2,dr=ZPTS.map(function(z){return gPDF(k,z);});
+      var mx=Math.max.apply(null,dr),mn=Math.min.apply(null,E0C),mxe=Math.max.apply(null,E0C);
+      var dn=dr.map(function(d){return +(d/mx*(mxe-mn)*0.4+mn).toFixed(2);});
+      var tf={size:9,color:'#888780'},gc='rgba(136,135,128,0.2)';
+      if(cht)cht.destroy();
+      cht=new Chart(document.getElementById('rv-cvs'),{
+        type:'bar',
+        data:{labels:ZPTS.map(function(z){return z.toFixed(2);}),
+              datasets:[
+                {type:'bar',data:dn,backgroundColor:'rgba(29,158,117,0.2)',borderColor:'rgba(29,158,117,0.5)',borderWidth:0.5,order:3},
+                {type:'line',data:E0C,borderColor:'#3266ad',borderWidth:2,pointRadius:0,fill:false,tension:0.3,order:1},
+                {type:'scatter',data:[{x:'1.00',y:E0Z1}],backgroundColor:'#C0392B',pointRadius:7,order:0},
+                {type:'scatter',data:[{x:'1.00',y:eh}],backgroundColor:'#1A7F6E',pointStyle:'triangle',pointRadius:7,order:0}
+              ]},
+        options:{responsive:true,maintainAspectRatio:false,
+                 plugins:{legend:{display:false},tooltip:{enabled:false}},
+                 scales:{
+                   x:{title:{display:true,text:'Z',font:tf,color:'#888780'},
+                      ticks:{font:tf,color:'#888780',callback:function(v,i){return ZPTS[i]!==undefined&&Math.abs(ZPTS[i]-Math.round(ZPTS[i]))<0.05?ZPTS[i].toFixed(0):'';}},
+                      grid:{color:gc,lineWidth:0.5}},
+                   y:{title:{display:true,text:'e₀ (anos)',font:tf,color:'#888780'},
+                      ticks:{font:tf,color:'#888780',maxTicksLimit:6,callback:function(v){return v.toFixed(0);}},
+                      grid:{color:gc,lineWidth:0.5}}
+                 },animation:{duration:150}}
+      });
+    }
+    function tryInit(){
+      var el=document.getElementById('rv-cvs');
+      if(!el){setTimeout(tryInit,200);return;}
+      document.getElementById('rv-sig2').addEventListener('input',upd);
+      upd();
+    }
+    if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',tryInit);}
+    else{tryInit();}
+  })();
+  </script>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     4 — VIÉS
+═══════════════════════════════════════════════════ -->
 <section>
   <h2>Viés de atenuação: Cox sem vs. com fragilidade</h2>
-  <p>Covariável X correlacionada com Z (simula vulnerabilidade socioeconômica).</p>
-
-  <div class="cols cols-2" style="margin-top:.5em">
+  <div class="g2">
     <div>
-      <pre class="code-bloco"><span class="cm"># Modelo sem fragilidade</span>
-<span class="fn">coxph</span>(Surv(tempo, evento) ~ X,
-      data = dados)
+      <pre class="cb"><span class="cm"># Sem fragilidade — β marginal (viesado)</span>
+<span class="fn">coxph</span>(Surv(tempo, evento) ~ X, data)
 
-<span class="cm"># Modelo com fragilidade gama</span>
+<span class="cm"># Com fragilidade gama — β condicional</span>
 <span class="fn">coxph</span>(Surv(tempo, evento) ~ X +
   <span class="fn">frailty</span>(id, distribution = <span class="st">"gamma"</span>),
-  data = dados)</pre>
+  data)</pre>
 
-      <div class="box-coral box" style="margin-top:.6em">
+      <div class="box-coral box" style="margin-top:.5em">
         <strong>Resultado (σ² = 0,5, N = 5.000):</strong><br>
-        HR marginal (sem fragilidade) ≈ <strong>1,31</strong><br>
-        HR condicional (com fragilidade) ≈ <strong>1,58</strong><br>
-        <span style="font-size:.85em">O modelo sem fragilidade subestima o HR em ~17%.</span>
+        HR marginal &nbsp;&nbsp; = <strong>1,31</strong> &nbsp; (sem fragilidade)<br>
+        HR condicional = <strong>1,58</strong> &nbsp; (com fragilidade gama)<br>
+        <span style="font-size:.9em">Subestimativa de ~17% ao ignorar Z</span>
       </div>
     </div>
     <div>
-      <h3>Por que isso acontece?</h3>
-      <p>O estimador do Cox sem fragilidade recupera o
-      <em>efeito marginal (populacional)</em> de X:</p>
-      <div class="eq">β̂_marginal = β_condicional × atenuação(σ²)</div>
-      <p>A atenuação cresce com σ²: quanto mais heterogênea a população,
-      mais o HR estimado subestima o efeito individual verdadeiro.</p>
-      <div class="box-azul box">
-        <strong>Implicação para políticas:</strong> tratamentos avaliados em populações
-        muito heterogêneas terão efeito aparentemente menor do que o efeito
-        que teriam sobre um indivíduo específico.
+      <h3>Mecanismo do viés</h3>
+      <div class="eq">β̂_marginal = β_cond × atenuação(σ²)</div>
+      <p>O Cox sem fragilidade estima o efeito <em>médio na população</em>,
+      que é menor que o efeito <em>para um indivíduo</em> com Z fixo.
+      A atenuação cresce com σ² e com a correlação entre X e Z.</p>
+      <div class="box-azul box" style="margin-top:.4em">
+        <strong>Implicação para políticas:</strong> tratamentos avaliados em
+        populações heterogêneas parecem menos eficazes do que são — o
+        efeito individual verdadeiro fica escondido pela mistura de fragilidades.
       </div>
+      <p class="nota">Chamberlain (1985); Gail (1984) · slide 15 da aula teórica</p>
     </div>
   </div>
-  <p class="nota">Referência: Chamberlain (1985); Gail (1984) — citados no slide 15 da aula teórica.</p>
 </section>
 
-<!-- ── Slide 5: Gama vs log-normal ── -->
+<!-- ═══════════════════════════════════════════════════
+     5 — GAMA vs LOG-NORMAL
+═══════════════════════════════════════════════════ -->
 <section>
   <h2>Distribuições de fragilidade: gama vs. log-normal</h2>
-  <div class="cols cols-3" style="margin-top:.5em">
-    <div class="box-azul box">
-      <strong>Fragilidade Gama</strong><br>
-      θ estimado ≈ 0,48<br>
-      AIC: referência<br>
-      Laplace analítica<br>
-      Identificável com covariáveis
+  <div class="g2" style="align-items:start">
+    <div>
+      <div class="g2" style="gap:.5em">
+        <div class="box-azul box">
+          <strong>Gama</strong><br>
+          θ ≈ 0,48 · AIC referência<br>
+          Laplace analítica · identificável<br>
+          <em>Padrão na literatura</em>
+        </div>
+        <div class="box box">
+          <strong>Log-normal</strong><br>
+          θ ≈ 0,52 · AIC ligeiramente ↑<br>
+          Integração numérica (EM)<br>
+          Cauda direita mais pesada
+        </div>
+      </div>
+      <div class="box-ouro box" style="margin-top:.5em">
+        <strong>Quando preferir log-normal?</strong><br>
+        Heterogeneidade extrema (alguns Z ≫ 1) ·
+        Dados de gêmeos com alta correlação ·
+        AIC/BIC favorece log-normal
+      </div>
+      <p class="nota">Vaupel (2002) <em>Demographic Research</em> 7(3) ·
+      Wienke (2003) MPIDR WP 2003-032</p>
     </div>
-    <div class="box box">
-      <strong>Fragilidade Log-normal</strong><br>
-      θ estimado ≈ 0,52<br>
-      AIC: ligeiramente maior<br>
-      Sem forma fechada → integração numérica<br>
-      Cauda mais pesada
-    </div>
-    <div class="box-ouro box">
-      <strong>Quando preferir log-normal?</strong><br>
-      Heterogeneidade extrema (Z >> 1)<br>
-      Dados de gêmeos com alta correlação<br>
-      Quando AIC/BIC favorece log-normal
-    </div>
-  </div>
-
-  <div class="fig-wrap" style="margin-top:.6em">
-    <svg viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" style="width:88%">
-      <!-- Eixos -->
-      <line x1="30" y1="130" x2="350" y2="130" stroke="#6C757D" stroke-width="1"/>
-      <line x1="30" y1="10"  x2="30"  y2="135" stroke="#6C757D" stroke-width="1"/>
-      <text x="185" y="148" font-size="9" fill="#6C757D" text-anchor="middle">Z (fragilidade)</text>
-      <text x="16"  y="70"  font-size="9" fill="#6C757D" writing-mode="tb">Densidade</text>
-      <!-- Linha Z=1 -->
-      <line x1="120" y1="10" x2="120" y2="130" stroke="#6C757D" stroke-width="0.8" stroke-dasharray="3,2"/>
-      <text x="122" y="125" font-size="8" fill="#6C757D">Z=1</text>
-      <!-- Gama (θ=0.5): pico em ~0.67, curva assimétrica -->
-      <path d="M30,128 C50,125 70,100 90,68 C105,45 115,28 120,22 C130,18 140,28 160,55
-               C180,82 210,112 250,125 C290,130 330,130 350,130"
+    <div>
+      <div class="fw">
+        <svg viewBox="0 0 300 155" xmlns="http://www.w3.org/2000/svg">
+          <line x1="28" y1="125" x2="280" y2="125" stroke="#6C757D" stroke-width="1"/>
+          <line x1="28" y1="10"  x2="28"  y2="128" stroke="#6C757D" stroke-width="1"/>
+          <text x="154" y="142" font-size="9" fill="#6C757D" text-anchor="middle">Z (fragilidade)</text>
+          <text x="29"  y="8"   font-size="9" fill="#6C757D">Densidade</text>
+          <!-- Z=1 -->
+          <line x1="118" y1="10" x2="118" y2="125" stroke="#6C757D" stroke-width=".8" stroke-dasharray="3,2"/>
+          <text x="120" y="120" font-size="8" fill="#6C757D">Z=1</text>
+          <!-- Gama -->
+          <path d="M28,123 C50,120 70,96 88,66 C102,44 112,27 118,21
+                   C128,16 140,26 160,52 C182,80 214,110 260,122 C280,124 280,125 280,125"
             fill="none" stroke="#C0392B" stroke-width="2"/>
-      <text x="115" y="14" font-size="9" fill="#C0392B">Gama (θ≈0,48)</text>
-      <!-- Log-normal (θ=0.52): cauda mais pesada -->
-      <path d="M30,128 C55,124 80,98 100,72 C115,53 120,38 128,30 C138,22 148,28 170,58
-               C195,90 230,118 280,127 C320,130 350,130 350,130"
+          <text x="95" y="14" font-size="8" fill="#C0392B">Gama (θ≈0,48)</text>
+          <!-- Log-normal -->
+          <path d="M28,123 C55,118 80,92 100,68 C114,50 120,36 128,28
+                   C140,20 152,28 174,56 C200,88 238,116 280,123"
             fill="none" stroke="#1A7F6E" stroke-width="2" stroke-dasharray="6,3"/>
-      <text x="280" y="120" font-size="9" fill="#1A7F6E">Log-normal (θ≈0,52)</text>
-      <!-- Eixo x labels -->
-      <text x="28"  y="142" font-size="8" fill="#6C757D">0</text>
-      <text x="118" y="142" font-size="8" fill="#6C757D">1</text>
-      <text x="208" y="142" font-size="8" fill="#6C757D">2</text>
-      <text x="298" y="142" font-size="8" fill="#6C757D">3</text>
-    </svg>
-    <p class="fig-cap">A log-normal tem cauda direita mais pesada: captura melhor heterogeneidade extrema.<br>
-    Ambas têm E[Z] = 1. A gama é preferida por tractabilidade analítica.</p>
+          <text x="188" y="112" font-size="8" fill="#1A7F6E">Log-normal</text>
+          <!-- eixo x -->
+          <text x="26"  y="136" font-size="8" fill="#6C757D">0</text>
+          <text x="116" y="136" font-size="8" fill="#6C757D">1</text>
+          <text x="206" y="136" font-size="8" fill="#6C757D">2</text>
+          <text x="270" y="136" font-size="8" fill="#6C757D">3</text>
+        </svg>
+        <p class="fc">Mesmo E[Z] = 1 · Log-normal tem cauda mais pesada à direita<br>
+        → captura melhor indivíduos com fragilidade extrema</p>
+      </div>
+    </div>
   </div>
-  <p class="nota">Referência: Vaupel (2002). <em>Demographic Research</em> 7(3):67–106. |
-  Wienke (2003). MPIDR WP 2003-032.</p>
 </section>
 
-<!-- ══════════════════════════════════════════════════════════════════
-     SEÇÃO B — DADOS REAIS
-════════════════════════════════════════════════════════════════════ -->
-<section class="secao-slide" data-background-color="#1A7F6E">
-  <h2>Parte 2<br>Dados Reais</h2>
-  <p>mgus2 (n=1.384) · pbc (n=312) · veteran (n=137)<br>
-  Todos disponíveis em <code style="background:rgba(0,0,0,.3);color:#fff">data(__, package="survival")</code></p>
+<!-- ═══════════════════════════════════════════════════
+     SEÇÃO B
+═══════════════════════════════════════════════════ -->
+<section class="secao" data-background-color="#1A7F6E">
+  <h2>Parte 2 · Dados Reais</h2>
+  <p><strong>mgus2</strong> (n=1.384) &nbsp;·&nbsp; <strong>pbc</strong> (n=312) &nbsp;·&nbsp;
+  <strong>veteran</strong> (n=137)<br>
+  <code style="background:rgba(0,0,0,.25);color:#fff">data(__, package = "survival")</code></p>
 </section>
 
-<!-- ── Slide 6: mgus2 visão geral ── -->
+<!-- ═══════════════════════════════════════════════════
+     6 — mgus2 VISÃO GERAL
+═══════════════════════════════════════════════════ -->
 <section>
   <h2>mgus2 — Gamopatia Monoclonal (Mayo Clinic, 1960–1994)</h2>
-  <div class="cols cols-2">
+  <div class="g2">
     <div>
-      <h3>Contexto clínico</h3>
-      <p>MGUS é uma condição pré-maligna assintomática. Dois desfechos competem:</p>
+      <h3>Contexto: dois riscos competitivos</h3>
       <ul>
-        <li><strong>Causa 1</strong>: progressão para PCM/amiloidose</li>
-        <li><strong>Causa 2</strong>: morte sem progressão (qualquer causa)</li>
+        <li><strong>Causa 1</strong>: progressão para PCM / amiloidose</li>
+        <li><strong>Causa 2</strong>: morte sem progressão</li>
       </ul>
-      <div class="eq" style="margin-top:.6em">
+      <div class="eq" style="margin-top:.5em">
         etime = min(ptime, futime)<br>
-        event: 0=censura · 1=progressão · 2=morte
+        event: 0 = censura · 1 = progressão · 2 = morte
       </div>
+      <p style="font-size:.75em; color:var(--cinza); margin-top:.3em">
+        Construção padrão do vignette oficial do pacote <code>survival</code>.
+      </p>
     </div>
     <div>
       <h3>Distribuição do desfecho</h3>
@@ -366,508 +737,465 @@
         <thead><tr><th>Status</th><th>N</th><th>%</th></tr></thead>
         <tbody>
           <tr><td>0 — Censura</td><td>409</td><td>29,6%</td></tr>
-          <tr><td>1 — Progressão</td><td>115</td><td>8,3%</td></tr>
-          <tr><td>2 — Morte sem progr.</td><td>860</td><td>62,1%</td></tr>
+          <tr><td>1 — Progressão (PCM)</td><td>115</td><td>8,3%</td></tr>
+          <tr><td>2 — Morte sem progressão</td><td>860</td><td>62,1%</td></tr>
         </tbody>
       </table>
       <div class="box" style="margin-top:.5em">
         Idade mediana ao diagnóstico: <strong>72 anos</strong><br>
-        Seguimento mediano: ~81 meses (6,8 anos)
+        M-spike mediano: <strong>1,2 g/dL</strong> · Seguimento: ~81 meses
       </div>
+      <p class="nota">Kyle RA et al. (2002) <em>NEJM</em> 346(8):564–569</p>
     </div>
   </div>
-  <p class="nota">Kyle RA et al. (2002). <em>NEJM</em> 346(8):564–569. |
-  <code>data(mgus2, package="survival")</code></p>
 </section>
 
-<!-- ── Slide 7: 1-KM vs CIF ── -->
+<!-- ═══════════════════════════════════════════════════
+     7 — CIF vs 1-KM
+═══════════════════════════════════════════════════ -->
 <section>
-  <h2>1-KM superestima a incidência de progressão</h2>
-  <div class="cols cols-2">
+  <h2>1-KM superestima a progressão</h2>
+  <div class="g2">
     <div>
-      <h3>Por quê o KM falha?</h3>
-      <p>O estimador de Kaplan-Meier trata mortes sem progressão como
-      <em>censura aleatória</em> — assume que quem morre sem progredir teria
-      a <em>mesma</em> probabilidade de progredir se sobrevivesse.</p>
-      <p>Isso viola a suposição de independência quando as causas competem.</p>
+      <h3>Por que o KM falha?</h3>
+      <p>KM trata mortes sem progressão como <em>censura aleatória</em> —
+      assume que os que morreram teriam a mesma chance de progredir
+      se tivessem sobrevivido. Essa suposição é biologicamente falsa.</p>
       <div class="eq">
-        F̂_KM(t) = 1 − Ŝ_KM(t) ≠ F_k(t)<br>
-        F_k(t) = ∫₀ᵗ S(u⁻) · ĥ_k(u) du  [Aalen-Johansen]
+        1 − Ŝ_KM(t) ≠ F̂_k(t)<br>
+        F̂_k(t) = ∫₀ᵗ Ŝ(u⁻) · ĥ_k(u) du &nbsp; [Aalen-Johansen]
       </div>
-      <div class="box-coral box">
-        <strong>Resultado empírico (mgus2):</strong><br>
-        Em 5 anos · Progressão feminina:<br>
-        1-KM: <span class="td-dest">~6,0%</span> ·
-        CIF correta: <span class="td-ok">~4,0%</span><br>
+      <div class="box-coral box" style="margin-top:.4em">
+        <strong>mgus2 — Progressão feminina em 5 anos:</strong><br>
+        1-KM: ~6,0% &nbsp;·&nbsp; CIF correta: ~4,0%<br>
         Superestimativa de <strong>50%</strong>
       </div>
+      <div class="box-azul box">
+        <strong>Verificação:</strong> CIF₁(t) + CIF₂(t) + S(t) = 1 ∀t<br>
+        Com dois 1-KM separados isso é impossível.
+      </div>
     </div>
     <div>
-      <!-- SVG: esquema CIF vs KM -->
-      <div class="fig-wrap">
-        <svg viewBox="0 0 300 195" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+      <div class="fw">
+        <svg viewBox="0 0 280 190" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <marker id="arr2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-              <path d="M0,0 L6,3 L0,6 Z" fill="#6C757D"/>
+            <marker id="a2" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+              <path d="M0,0 L5,2.5 L0,5Z" fill="#6C757D"/>
             </marker>
           </defs>
-          <line x1="35" y1="165" x2="280" y2="165" stroke="#6C757D" stroke-width="1" marker-end="url(#arr2)"/>
-          <line x1="35" y1="20"  x2="35"  y2="170" stroke="#6C757D" stroke-width="1" marker-end="url(#arr2)"/>
-          <text x="275" y="178" font-size="9" fill="#6C757D">Anos</text>
-          <text x="36"  y="16"  font-size="9" fill="#6C757D">CIF</text>
-          <!-- 1-KM feminino tracejado coral -->
-          <polyline points="35,165 80,160 120,150 160,138 200,124 240,115 270,108"
-                    fill="none" stroke="#C0392B" stroke-width="1.8" stroke-dasharray="5,3"/>
-          <text x="272" y="110" font-size="8" fill="#C0392B">1-KM ♀</text>
-          <!-- CIF feminino sólido coral -->
-          <polyline points="35,165 80,162 120,157 160,149 200,140 240,134 270,130"
-                    fill="none" stroke="#C0392B" stroke-width="2"/>
-          <text x="272" y="132" font-size="8" fill="#C0392B">CIF ♀</text>
-          <!-- 1-KM masculino tracejado azul -->
-          <polyline points="35,165 80,161 120,152 160,142 200,130 240,122 270,116"
-                    fill="none" stroke="#2C3E50" stroke-width="1.8" stroke-dasharray="5,3"/>
-          <text x="272" y="118" font-size="8" fill="#2C3E50">1-KM ♂</text>
-          <!-- CIF masculino sólido azul -->
-          <polyline points="35,165 80,163 120,159 160,153 200,145 240,139 270,135"
-                    fill="none" stroke="#2C3E50" stroke-width="2"/>
-          <text x="272" y="137" font-size="8" fill="#2C3E50">CIF ♂</text>
-          <!-- Linha 5 anos -->
-          <line x1="120" y1="20" x2="120" y2="165" stroke="#D4A843" stroke-width="0.8" stroke-dasharray="3,2"/>
-          <text x="113" y="182" font-size="8" fill="#D4A843">5 anos</text>
-          <!-- Seta divergência -->
-          <line x1="121" y1="149" x2="121" y2="157" stroke="#6C757D" stroke-width="1.2" marker-end="url(#arr2)"/>
-          <!-- Eixo x labels -->
-          <text x="33"  y="178" font-size="8" fill="#6C757D">0</text>
-          <text x="78"  y="178" font-size="8" fill="#6C757D">5</text>
-          <text x="156" y="178" font-size="8" fill="#6C757D">15</text>
-          <text x="236" y="178" font-size="8" fill="#6C757D">25</text>
-          <!-- Legenda -->
-          <line x1="40" y1="30" x2="65" y2="30" stroke="#6C757D" stroke-width="1.5" stroke-dasharray="5,3"/>
-          <text x="67" y="33" font-size="8" fill="#6C757D">1-KM (errado)</text>
-          <line x1="40" y1="42" x2="65" y2="42" stroke="#6C757D" stroke-width="2"/>
-          <text x="67" y="45" font-size="8" fill="#6C757D">CIF (correto)</text>
+          <line x1="32" y1="160" x2="265" y2="160" stroke="#6C757D" stroke-width="1" marker-end="url(#a2)"/>
+          <line x1="32" y1="16"  x2="32"  y2="164" stroke="#6C757D" stroke-width="1" marker-end="url(#a2)"/>
+          <text x="260" y="172" font-size="9" fill="#6C757D">Anos</text>
+          <text x="34"  y="13"  font-size="9" fill="#6C757D">CIF</text>
+          <!-- 1-KM F -->
+          <polyline points="32,160 75,155 115,146 155,134 195,120 235,113 260,107"
+            fill="none" stroke="#C0392B" stroke-width="1.6" stroke-dasharray="5,3"/>
+          <!-- CIF F -->
+          <polyline points="32,160 75,157 115,152 155,146 195,138 235,133 260,130"
+            fill="none" stroke="#C0392B" stroke-width="2"/>
+          <!-- 1-KM M -->
+          <polyline points="32,160 75,156 115,148 155,138 195,126 235,119 260,114"
+            fill="none" stroke="#2C3E50" stroke-width="1.6" stroke-dasharray="5,3"/>
+          <!-- CIF M -->
+          <polyline points="32,160 75,158 115,154 155,148 195,142 235,138 260,135"
+            fill="none" stroke="#2C3E50" stroke-width="2"/>
+          <!-- 5 anos -->
+          <line x1="115" y1="16" x2="115" y2="160" stroke="#D4A843" stroke-width=".8" stroke-dasharray="3,2"/>
+          <text x="108" y="175" font-size="8" fill="#D4A843">5a</text>
+          <!-- labels -->
+          <text x="262" y="109" font-size="8" fill="#C0392B">1-KM ♀</text>
+          <text x="262" y="132" font-size="8" fill="#C0392B">CIF ♀</text>
+          <text x="262" y="116" font-size="8" fill="#2C3E50">1-KM ♂</text>
+          <text x="262" y="137" font-size="8" fill="#2C3E50">CIF ♂</text>
+          <!-- eixo x -->
+          <text x="30"  y="172" font-size="8" fill="#6C757D">0</text>
+          <text x="73"  y="172" font-size="8" fill="#6C757D">5</text>
+          <text x="151" y="172" font-size="8" fill="#6C757D">15</text>
+          <text x="229" y="172" font-size="8" fill="#6C757D">25</text>
+          <!-- legenda -->
+          <line x1="36" y1="30" x2="58" y2="30" stroke="#6C757D" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="60" y="33" font-size="7.5" fill="#6C757D">1-KM (errado)</text>
+          <line x1="36" y1="40" x2="58" y2="40" stroke="#6C757D" stroke-width="2"/>
+          <text x="60" y="43" font-size="7.5" fill="#6C757D">CIF Aalen-Johansen</text>
         </svg>
-        <p class="fig-cap">Progressão para PCM/amiloidose · mgus2<br>
-        Separação começa imediatamente — mortes competidoras são frequentes.</p>
+        <p class="fc">Progressão para PCM/amiloidose · mgus2<br>
+        Separação visível desde os primeiros anos</p>
       </div>
     </div>
   </div>
-  <div class="box-azul box" style="margin-top:.3em; font-size:.78em">
-    <strong>Verificação:</strong> CIF₁(t) + CIF₂(t) + S(t) = 1 para todos os t. Impossível com dois 1-KM separados.
-  </div>
 </section>
 
-<!-- ── Slide 8: Fine & Gray ── -->
+<!-- ═══════════════════════════════════════════════════
+     8 — FINE & GRAY
+═══════════════════════════════════════════════════ -->
 <section>
-  <h2>Fine & Gray — Subdistribution Hazard (mgus2)</h2>
-  <p style="font-size:.78em">
-    O subdistribution hazard modela a CIF diretamente:
-    <span class="eq" style="display:inline-block;padding:.2em .6em">
-      h̃_k(t) = −d/dt [log(1 − F_k(t))]
-    </span>
-    Implementação: <code>finegray()</code> no pacote <code>survival</code>
+  <h2>Fine &amp; Gray — Subdistribution Hazard</h2>
+  <p style="font-size:.76em">
+    Modela a CIF diretamente: &nbsp;
+    <span class="eq" style="display:inline;padding:.15em .5em">h̃_k(t) = −d/dt [log(1 − F_k(t))]</span>
+    &nbsp; · &nbsp; <code>finegray(Surv(etime, factor(event)) ~ ., etype=1)</code>
   </p>
 
-  <table style="margin-top:.5em">
+  <table style="margin-top:.4em">
     <thead>
-      <tr>
-        <th>Covariável</th>
-        <th>CS-HR Progr.</th>
-        <th>SHR Progr.</th>
-        <th>CS-HR Morte</th>
-        <th>SHR Morte</th>
-      </tr>
+      <tr><th>Covariável</th><th>CS-HR Prog.</th><th>SHR Prog.</th><th>CS-HR Morte</th><th>SHR Morte</th></tr>
     </thead>
     <tbody>
-      <tr>
-        <td>Idade (por ano)</td>
-        <td>1,016</td>
-        <td class="td-dest">0,983</td>
-        <td>1,067</td>
-        <td>1,061</td>
-      </tr>
-      <tr>
-        <td>Sexo masculino</td>
-        <td>0,995</td>
-        <td class="td-dest">0,808</td>
-        <td>1,475</td>
-        <td>1,446</td>
-      </tr>
-      <tr>
-        <td>M-spike (por g/dL)</td>
-        <td>2,421</td>
-        <td class="td-ok">2,431</td>
-        <td>0,942</td>
-        <td>0,857</td>
-      </tr>
+      <tr><td>Idade (por ano)</td><td>1,016</td><td class="td-r">0,983</td><td>1,067</td><td>1,061</td></tr>
+      <tr><td>Sexo masculino</td><td>0,995</td><td class="td-r">0,808</td><td>1,475</td><td>1,446</td></tr>
+      <tr><td>M-spike (g/dL)</td><td>2,421</td><td class="td-g">2,431</td><td>0,942</td><td>0,857</td></tr>
     </tbody>
   </table>
 
-  <div class="cols cols-2" style="margin-top:.7em">
+  <div class="g2" style="margin-top:.45em">
     <div class="box-coral box">
       <strong>Inversão do efeito da idade</strong><br>
-      CS-HR = 1,016 → cada ano extra aumenta risco instantâneo<br>
-      SHR = 0,983 → cada ano extra <em>reduz</em> a CIF de progressão<br>
-      <span style="font-size:.85em">Idosos morrem mais de outras causas (Causa 2),
-      sobrando menos para progredir → competição inverte o sinal!</span>
+      CS-HR = 1,016: cada ano extra ↑ risco instantâneo de progressão<br>
+      SHR &nbsp;&nbsp;= 0,983: cada ano extra ↓ incidência cumulativa<br>
+      <em>Idosos morrem mais de outras causas antes de progredir —
+      a competição inverte o sinal observado!</em>
     </div>
     <div class="box box">
       <strong>M-spike: CS ≈ SHR</strong><br>
-      M-spike afeta fortemente a progressão (HR ≈ 2,4),<br>
-      mas quase não afeta a mortalidade geral.<br>
-      Sem competição relevante → CS-HR ≈ SHR.<br>
-      <span style="font-size:.85em"><em>Quando a covariável afeta apenas uma causa,
-      os dois estimadores convergem.</em></span>
+      M-spike não afeta a mortalidade geral → sem competição
+      relevante → os dois estimadores convergem.<br>
+      <strong>Regra:</strong> CS ≠ SHR quando a covariável afeta ambas as causas;
+      CS ≈ SHR quando afeta apenas uma.
     </div>
   </div>
-
-  <div class="box-azul box" style="margin-top:.5em; font-size:.78em">
-    <strong>Regra prática:</strong>
-    Etiologia / mecanismo biológico → <strong>Cox causa-específica</strong>.
-    Prognóstico / comunicação de risco ao paciente → <strong>Fine & Gray (SHR)</strong>.
+  <div class="box-azul box" style="margin-top:.4em; font-size:.76em">
+    <strong>Etiologia / mecanismo biológico</strong> → Cox causa-específica &nbsp;|&nbsp;
+    <strong>Prognóstico / risco ao paciente</strong> → Fine &amp; Gray (SHR)
   </div>
-  <p class="nota">Fine & Gray (1999). <em>JASA</em> 94(446):496–509. |
-  <code>finegray(Surv(etime, factor(event)) ~ ., data, etype=1)</code></p>
+  <p class="nota">Fine &amp; Gray (1999) <em>JASA</em> 94(446):496–509 &nbsp;·&nbsp;
+  <code>survival::finegray()</code> (sem dependências extras)</p>
 </section>
 
-<!-- ── Slide 9: pbc fragilidade ── -->
+<!-- ═══════════════════════════════════════════════════
+     9 — pbc FRAGILIDADE
+═══════════════════════════════════════════════════ -->
 <section>
-  <h2>pbc — Cirrose Biliar: fragilidade por estágio histológico</h2>
-  <div class="cols cols-2">
+  <h2>pbc — Cirrose Biliar: fragilidade por estágio</h2>
+  <div class="g2">
     <div>
-      <h3>Modelo estimado</h3>
-      <div class="eq">
-        µ(t | Z_estágio) = Z · µ₀(t) · exp(β₁trt + β₂log bili + β₃albumin)<br>
-        Z_estágio ~ Gama(1/θ, 1/θ)
+      <div class="eq" style="font-size:.7em">
+        µ(t|Z) = Z · µ₀(t) · exp(β₁trt + β₂log bili + β₃albumin)<br>
+        Z_estágio ~ Gama(1/θ, 1/θ) &nbsp; [n=312, Mayo Clinic]
       </div>
-      <table style="margin-top:.5em">
-        <thead><tr><th>Covariável</th><th>HR (sem θ)</th><th>HR (com θ)</th></tr></thead>
+      <table style="margin-top:.4em">
+        <thead><tr><th>Covariável</th><th>HR sem θ</th><th>HR com θ</th></tr></thead>
         <tbody>
           <tr><td>D-penicilamina</td><td>0,929</td><td>0,996</td></tr>
           <tr><td>log(Bilirrubina)</td><td>2,660</td><td>2,594</td></tr>
           <tr><td>Albumina</td><td>0,311</td><td>0,327</td></tr>
         </tbody>
       </table>
-      <div class="box-ouro box" style="margin-top:.5em">
-        <strong>θ = 0,095</strong> (p = 0,023)<br>
-        Heterogeneidade significativa entre estágios<br>
-        <em>além</em> das covariáveis observadas
+      <div class="box-ouro box" style="margin-top:.4em">
+        <strong>θ = 0,095 · p = 0,023</strong><br>
+        Heterogeneidade residual significativa entre estágios
+        além de bili e albumina
       </div>
+      <div class="box-coral box" style="margin-top:.35em">
+        D-penicilamina: HR ≈ 1,00 em ambos os modelos.<br>
+        <strong>Confirmação histórica:</strong> ensaio mostrou ineficácia em 1992.
+      </div>
+      <p class="nota">Fleming &amp; Harrington (1991) · <code>survival::pbc</code></p>
     </div>
     <div>
-      <h3>Fragilidades estimadas por estágio</h3>
-      <!-- SVG: barras de fragilidade por estágio -->
-      <div class="fig-wrap">
-        <svg viewBox="0 0 260 175" xmlns="http://www.w3.org/2000/svg" style="width:100%">
-          <!-- Eixos -->
-          <line x1="40" y1="140" x2="240" y2="140" stroke="#6C757D" stroke-width="1"/>
-          <line x1="40" y1="20"  x2="40"  y2="145" stroke="#6C757D" stroke-width="1"/>
-          <!-- Linha Z=1 -->
-          <line x1="40" y1="80" x2="240" y2="80" stroke="#6C757D" stroke-width="0.8" stroke-dasharray="4,2"/>
-          <text x="242" y="83" font-size="8" fill="#6C757D">Z=1</text>
-          <!-- Barras: Z = 0.778, 0.804, 1.031, 1.387 -->
-          <!-- Estágio 1: Z=0.778 → abaixo da linha -->
-          <rect x="55"  y="92"  width="28" height="48" fill="#1A7F6E" rx="2"/>
-          <text x="69"  y="162" font-size="9" fill="#6C757D" text-anchor="middle">E1</text>
-          <text x="69"  y="88"  font-size="9" fill="#1A7F6E" text-anchor="middle">0,78</text>
-          <!-- Estágio 2: Z=0.804 -->
-          <rect x="100" y="89"  width="28" height="51" fill="#1A7F6E" rx="2"/>
-          <text x="114" y="162" font-size="9" fill="#6C757D" text-anchor="middle">E2</text>
-          <text x="114" y="85"  font-size="9" fill="#1A7F6E" text-anchor="middle">0,80</text>
-          <!-- Estágio 3: Z=1.031 -->
-          <rect x="145" y="77"  width="28" height="63" fill="#D4A843" rx="2"/>
-          <text x="159" y="162" font-size="9" fill="#6C757D" text-anchor="middle">E3</text>
-          <text x="159" y="73"  font-size="9" fill="#9A7420" text-anchor="middle">1,03</text>
-          <!-- Estágio 4: Z=1.387 -->
-          <rect x="190" y="47"  width="28" height="93" fill="#C0392B" rx="2"/>
-          <text x="204" y="162" font-size="9" fill="#6C757D" text-anchor="middle">E4</text>
-          <text x="204" y="43"  font-size="9" fill="#C0392B" text-anchor="middle">1,39</text>
-          <!-- Eixo y labels -->
-          <text x="28" y="83"  font-size="8" fill="#6C757D">1,0</text>
-          <text x="28" y="143" font-size="8" fill="#6C757D">0,5</text>
-          <text x="28" y="23"  font-size="8" fill="#6C757D">1,5</text>
+      <h3>Z estimado por estágio histológico</h3>
+      <div class="fw">
+        <svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg">
+          <line x1="38" y1="135" x2="225" y2="135" stroke="#6C757D" stroke-width="1"/>
+          <line x1="38" y1="18"  x2="38"  y2="138" stroke="#6C757D" stroke-width="1"/>
+          <line x1="38" y1="78" x2="225" y2="78" stroke="#6C757D" stroke-width=".8" stroke-dasharray="4,2"/>
+          <text x="227" y="81" font-size="8" fill="#6C757D">Z=1</text>
+          <!-- E1: Z=0.778 → altura (1-0.778)*60 = 13.3 acima do baseline 135 -->
+          <!-- mapeando Z: 0.5→135, 1.0→78, 1.5→21; escala: 1 unit Z = 57px -->
+          <!-- Z=0.778 → y_top = 135-(0.778-0.5)*57 = 135-15.8 = 119.2 -->
+          <rect x="50"  y="119" width="30" height="16" fill="#1A7F6E" rx="2"/>
+          <text x="65"  y="150" font-size="8.5" fill="#6C757D" text-anchor="middle">E1</text>
+          <text x="65"  y="115" font-size="8.5" fill="#1A7F6E" text-anchor="middle">0,78</text>
+          <!-- Z=0.804 → y_top = 135-(0.804-0.5)*57 = 135-17.3 = 117.7 -->
+          <rect x="93"  y="118" width="30" height="17" fill="#1A7F6E" rx="2"/>
+          <text x="108" y="150" font-size="8.5" fill="#6C757D" text-anchor="middle">E2</text>
+          <text x="108" y="114" font-size="8.5" fill="#1A7F6E" text-anchor="middle">0,80</text>
+          <!-- Z=1.031 → y_top = 135-(1.031-0.5)*57 = 135-30.3 = 104.7 ... mas vai acima de Z=1 linha 78 -->
+          <!-- correto: y_top = 78-(1.031-1.0)*57 = 78-1.8 = 76.2; height = 135-76.2 = 58.8 -->
+          <rect x="136" y="76" width="30" height="59" fill="#D4A843" rx="2"/>
+          <text x="151" y="150" font-size="8.5" fill="#6C757D" text-anchor="middle">E3</text>
+          <text x="151" y="72" font-size="8.5" fill="#9A7420" text-anchor="middle">1,03</text>
+          <!-- Z=1.387 → y_top = 78-(1.387-1.0)*57 = 78-22.1 = 55.9; height=135-55.9=79.1 -->
+          <rect x="179" y="56" width="30" height="79" fill="#C0392B" rx="2"/>
+          <text x="194" y="150" font-size="8.5" fill="#6C757D" text-anchor="middle">E4</text>
+          <text x="194" y="52" font-size="8.5" fill="#C0392B" text-anchor="middle">1,39</text>
+          <!-- eixo y -->
+          <text x="18" y="81"  font-size="8" fill="#6C757D">1,0</text>
+          <text x="18" y="137" font-size="8" fill="#6C757D">0,5</text>
+          <text x="18" y="24"  font-size="8" fill="#6C757D">1,5</text>
         </svg>
-        <p class="fig-cap">Fragilidade Z por estágio histológico.<br>
-        Estágios 1-2: Z &lt; 1 (mais robustos). Estágio 4: Z = 1,39 (39% acima da média).</p>
-      </div>
-      <div class="box" style="font-size:.78em; margin-top:.3em">
-        D-penicilamina: HR ≈ 1,00 em ambos os modelos.<br>
-        <strong>Confirmação histórica</strong>: o ensaio mostrou ineficácia do tratamento em 1992.
+        <p class="fc">Estágios 1-2: Z &lt; 1 (mais robustos que a média)<br>
+        Estágio 4: Z = 1,39 (39% acima — heterog. residual elevada)</p>
       </div>
     </div>
   </div>
-  <p class="nota">Fleming & Harrington (1991). <em>Counting Processes and Survival Analysis</em>. Wiley. |
-  <code>frailty(stage, distribution="gamma")</code> · θ = 0,095 · p = 0,023</p>
 </section>
 
-<!-- ── Slide 10: veteran ── -->
+<!-- ═══════════════════════════════════════════════════
+     10 — VETERAN
+═══════════════════════════════════════════════════ -->
 <section>
   <h2>veteran — Câncer de Pulmão: efeito fixo vs. fragilidade</h2>
-  <div class="cols cols-2">
+  <div class="g2">
     <div>
-      <h3>Quando usar efeito aleatório?</h3>
-      <p>Tipo celular é um cluster natural de fragilidade biológica:</p>
-      <ul>
-        <li>Número de grupos <strong>pequeno</strong> (k=4)</li>
-        <li>Interesse no efeito <strong>médio</strong> (marginalizado)</li>
-        <li>Heterogeneidade residual <strong>dentro</strong> de cada tipo</li>
-      </ul>
-      <div class="box-ouro box" style="margin-top:.6em">
-        <strong>θ = 0,151</strong><br>
-        Heterogeneidade entre tipos celulares<br>
-        além de karno, idade e tratamento
-      </div>
-
-      <table style="margin-top:.5em; font-size:.8em">
-        <thead><tr><th>Cov.</th><th>HR fixo</th><th>HR frailty</th></tr></thead>
+      <h3>Efeito fixo vs. aleatório (k = 4 tipos)</h3>
+      <table>
+        <thead><tr><th>Covariável</th><th>HR fixo</th><th>HR frailty</th></tr></thead>
         <tbody>
           <tr><td>Tratamento</td><td>1,354</td><td>1,340</td></tr>
           <tr><td>Karnofsky</td><td>0,968</td><td>0,968</td></tr>
           <tr><td>Idade</td><td>0,991</td><td>0,992</td></tr>
         </tbody>
       </table>
-      <p style="font-size:.72em;color:var(--cinza);margin-top:.3em">
-        Com poucos clusters, efeito fixo ≈ fragilidade.<br>
-        A diferença cresce com k e com θ.
-      </p>
+      <div class="box-ouro box" style="margin-top:.45em">
+        <strong>θ = 0,151</strong> — heterogeneidade entre tipos além das covariáveis<br>
+        Com k = 4 grupos, efeito fixo ≈ fragilidade.<br>
+        A diferença cresce com k &gt; 20 grupos ou θ &gt; 0,5.
+      </div>
+      <div class="box-coral box">
+        <strong>Quando preferir fragilidade?</strong><br>
+        Interesse em quantificar variabilidade <em>entre</em> grupos (θ),
+        não apenas no efeito médio dentro deles.
+      </div>
+      <p class="nota">Kalbfleisch &amp; Prentice (1980) · <code>survival::veteran</code></p>
     </div>
     <div>
-      <h3>Fragilidades por tipo celular</h3>
-      <div class="fig-wrap">
-        <svg viewBox="0 0 250 170" xmlns="http://www.w3.org/2000/svg" style="width:100%">
-          <line x1="35" y1="130" x2="230" y2="130" stroke="#6C757D" stroke-width="1"/>
-          <line x1="35" y1="15"  x2="35"  y2="135" stroke="#6C757D" stroke-width="1"/>
-          <!-- Linha Z=1 -->
-          <line x1="35" y1="80" x2="230" y2="80" stroke="#6C757D" stroke-width="0.8" stroke-dasharray="4,2"/>
-          <text x="232" y="83" font-size="8" fill="#6C757D">Z=1</text>
-          <!-- squamous: Z=0.577 -->
-          <rect x="45"  y="88"  width="35" height="42" fill="#1A7F6E" rx="2"/>
-          <text x="62"  y="148" font-size="8" fill="#6C757D" text-anchor="middle">squam.</text>
-          <text x="62"  y="84"  font-size="9" fill="#1A7F6E" text-anchor="middle">0,58</text>
-          <!-- smallcell: Z=1.164 -->
-          <rect x="92"  y="69"  width="35" height="61" fill="#D4A843" rx="2"/>
-          <text x="109" y="148" font-size="8" fill="#6C757D" text-anchor="middle">small</text>
-          <text x="109" y="65"  font-size="9" fill="#9A7420" text-anchor="middle">1,16</text>
-          <!-- adeno: Z=1.446 -->
-          <rect x="139" y="44"  width="35" height="86" fill="#C0392B" rx="2"/>
-          <text x="156" y="148" font-size="8" fill="#6C757D" text-anchor="middle">adeno</text>
-          <text x="156" y="40"  font-size="9" fill="#C0392B" text-anchor="middle">1,45</text>
-          <!-- large: Z=0.813 -->
-          <rect x="186" y="81"  width="35" height="49" fill="#2C3E50" rx="2"/>
-          <text x="203" y="148" font-size="8" fill="#6C757D" text-anchor="middle">large</text>
-          <text x="203" y="77"  font-size="9" fill="#2C3E50" text-anchor="middle">0,81</text>
-          <!-- labels eixo y -->
-          <text x="18" y="83"  font-size="8" fill="#6C757D">1,0</text>
-          <text x="18" y="133" font-size="8" fill="#6C757D">0,5</text>
-          <text x="18" y="33"  font-size="8" fill="#6C757D">1,5</text>
+      <h3>Z por tipo celular</h3>
+      <div class="fw">
+        <svg viewBox="0 0 230 165" xmlns="http://www.w3.org/2000/svg">
+          <line x1="32" y1="125" x2="215" y2="125" stroke="#6C757D" stroke-width="1"/>
+          <line x1="32" y1="14"  x2="32"  y2="128" stroke="#6C757D" stroke-width="1"/>
+          <!-- Z=1 em y=70: 0.5→125, 1.0→70, 1.5→15; escala=55px/unit -->
+          <line x1="32" y1="70" x2="215" y2="70" stroke="#6C757D" stroke-width=".8" stroke-dasharray="4,2"/>
+          <text x="217" y="73" font-size="8" fill="#6C757D">Z=1</text>
+          <!-- squamous Z=0.577 → y_top=125-(0.577-0.5)*55=125-4.2=120.8; h=4.2 -->
+          <rect x="42"  y="99" width="28" height="26" fill="#1A7F6E" rx="2"/>
+          <text x="56"  y="140" font-size="7.5" fill="#6C757D" text-anchor="middle">squam.</text>
+          <text x="56"  y="95"  font-size="8" fill="#1A7F6E" text-anchor="middle">0,58</text>
+          <!-- large Z=0.813 → y_top=125-(0.813-0.5)*55=125-17.2=107.8; h=17.2 -->
+          <rect x="84"  y="108" width="28" height="17" fill="#2C3E50" rx="2"/>
+          <text x="98"  y="140" font-size="7.5" fill="#6C757D" text-anchor="middle">large</text>
+          <text x="98"  y="104" font-size="8" fill="#2C3E50" text-anchor="middle">0,81</text>
+          <!-- smallcell Z=1.164 → y_top=70-(1.164-1.0)*55=70-9.0=61; h=125-61=64 -->
+          <rect x="126" y="61" width="28" height="64" fill="#D4A843" rx="2"/>
+          <text x="140" y="140" font-size="7.5" fill="#6C757D" text-anchor="middle">small</text>
+          <text x="140" y="57"  font-size="8" fill="#9A7420" text-anchor="middle">1,16</text>
+          <!-- adeno Z=1.446 → y_top=70-(1.446-1.0)*55=70-24.5=45.5; h=125-45.5=79.5 -->
+          <rect x="168" y="46" width="28" height="79" fill="#C0392B" rx="2"/>
+          <text x="182" y="140" font-size="7.5" fill="#6C757D" text-anchor="middle">adeno</text>
+          <text x="182" y="42"  font-size="8" fill="#C0392B" text-anchor="middle">1,45</text>
+          <!-- eixo y -->
+          <text x="12" y="73"  font-size="8" fill="#6C757D">1,0</text>
+          <text x="12" y="128" font-size="8" fill="#6C757D">0,5</text>
+          <text x="12" y="20"  font-size="8" fill="#6C757D">1,5</text>
         </svg>
-        <p class="fig-cap">Adenocarcinoma: Z = 1,45 (45% acima da média).<br>
-        Squamous: Z = 0,58 (mais robusto que a média). θ = 0,151.</p>
-      </div>
-      <div class="box-coral box" style="font-size:.76em">
-        <strong>Conexão com a aula teórica:</strong> tipos celulares mais frágeis
-        (adeno, smallcell) morrem mais cedo → seus sobreviventes tornam-se
-        progressivamente mais robustos que a média — exatamente o mecanismo
-        do "plateau" descrito em Vaupel et al. (1979).
+        <p class="fc">Adenocarcinoma: Z = 1,45 — variabilidade intratumoral elevada<br>
+        Squamous: Z = 0,58 — resposta terapêutica melhor capturada pelas cov.</p>
       </div>
     </div>
   </div>
-  <p class="nota">Kalbfleisch & Prentice (1980). <em>The Statistical Analysis of Failure Time Data</em>. Wiley. |
-  <code>frailty(celltype, distribution="gamma")</code></p>
 </section>
 
-<!-- ══════════════════════════════════════════════════════════════════
-     SLIDE 11 — GUIA DE ESCOLHA
-════════════════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════
+     11 — GUIA DE ESCOLHA
+═══════════════════════════════════════════════════ -->
 <section>
   <h2>Guia de escolha de modelo</h2>
-  <table style="margin-top:.4em">
+  <table style="margin-top:.3em">
     <thead>
-      <tr>
-        <th>Pergunta de pesquisa</th>
-        <th>Modelo adequado</th>
-        <th>Exemplo</th>
-      </tr>
+      <tr><th>Pergunta de pesquisa</th><th>Modelo</th><th>Exemplo neste lab</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td>Mecanismo etiológico<br><em>(dado vivo, qual o risco?)</em></td>
-        <td class="td-ok">Cox causa-específica</td>
-        <td>CS-HR do M-spike em mgus2</td>
+        <td>Mecanismo etiológico<br><em style="font-size:.88em">(dado vivo, qual o risco?)</em></td>
+        <td class="td-g">Cox causa-específica</td>
+        <td>CS-HR do M-spike · mgus2</td>
       </tr>
       <tr>
-        <td>Prognóstico / incidência observada<br><em>(o que acontece na população?)</em></td>
-        <td class="td-ok">Fine & Gray (SHR)</td>
-        <td>SHR da idade em mgus2</td>
+        <td>Prognóstico / incidência observada<br><em style="font-size:.88em">(o que acontece na população?)</em></td>
+        <td class="td-g">Fine &amp; Gray (SHR)</td>
+        <td>SHR da idade · mgus2</td>
       </tr>
       <tr>
-        <td>Plateau de mortalidade<br><em>(centenários, idades muito avançadas)</em></td>
-        <td class="td-ok">Fragilidade + Gompertz paramétrico</td>
-        <td>Plateau teórico: b/σ²</td>
+        <td>Plateau de mortalidade / centenários</td>
+        <td class="td-g">Fragilidade + Gompertz paramétrico</td>
+        <td>Plateau teórico b/σ² · simulação</td>
       </tr>
       <tr>
-        <td>Dados agrupados / famílias<br><em>(dependência intracluster)</em></td>
-        <td class="td-ok">Fragilidade compartilhada (frailtypack)</td>
-        <td>pbc: estágio · veteran: tipo celular</td>
+        <td>Dados agrupados / famílias<br><em style="font-size:.88em">(dependência intracluster)</em></td>
+        <td class="td-g">Fragilidade compartilhada</td>
+        <td>pbc: θ=0,095 · veteran: θ=0,151</td>
       </tr>
       <tr>
         <td>Agrupados + riscos competitivos</td>
-        <td class="td-ok">multivPenal / CS-frailty por causa</td>
+        <td class="td-g">multivPenal / CS-frailty</td>
         <td>Dados hospitalares com clusters</td>
       </tr>
       <tr>
         <td>Cruzamento de curvas entre grupos</td>
-        <td class="td-dest">Suspeitar seleção diferencial (σ² ≠)</td>
-        <td>mgus2: F vs. M · exercício câncer de mama</td>
+        <td class="td-r">Suspeitar seleção diferencial (σ² ≠)</td>
+        <td>Exercício câncer de mama · slide 44</td>
       </tr>
     </tbody>
   </table>
-  <div class="box-ouro box" style="margin-top:.7em; font-size:.78em">
-    <strong>Regra de ouro da trilogia Vaupel & Yashin (1987–1988):</strong>
-    Qualquer intervenção que altera <em>quem morre</em> altera também a composição de fragilidade
-    dos sobreviventes — com efeitos persistentes que não aparecem em modelos sem Z.
+  <div class="box-ouro box" style="margin-top:.5em; font-size:.76em">
+    <strong>Trilogia Vaupel &amp; Yashin (1987–1988):</strong>
+    qualquer intervenção que muda <em>quem morre</em> muda a composição de fragilidade dos sobreviventes —
+    com efeitos persistentes invisíveis em modelos sem Z.
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════════════════════
-     SLIDE 12 — Z̄(x) SÍNTESE
-════════════════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════
+     12 — Z̄(x) SÍNTESE
+═══════════════════════════════════════════════════ -->
 <section>
-  <h2>Síntese: a queda de Z̄(x) como mecanismo universal</h2>
-  <div class="cols cols-2">
+  <h2>Síntese: Z̄(x) como mecanismo unificador</h2>
+  <div class="g2">
     <div>
-      <div class="eq" style="margin-bottom:.6em">
-        Z̄(x) = 1 / [1 + σ² · Λ₀(x)]<br>
-        <span style="font-size:.85em">Vaupel, Manton & Stallard (1979)</span>
+      <div class="eq">Z̄(x) = 1 / [1 + σ² · Λ₀(x)]<br>
+        <span style="font-size:.85em">Vaupel, Manton &amp; Stallard (1979)</span>
       </div>
-      <p>Quanto maior σ² e maior a idade, menor é Z̄(x):<br>
-      a seleção progressiva torna os sobreviventes cada vez mais robustos.</p>
-      <div class="cols cols-3" style="margin-top:.8em; gap:.5em">
+      <p>Maior σ² e maior Λ₀(x) → Z̄(x) cai mais rápido:
+      os sobreviventes são cada vez mais robustos.</p>
+      <div class="g3" style="margin-top:.6em; gap:.5em">
         <div style="text-align:center">
-          <div class="num-grande" style="color:#1A7F6E">↓</div>
-          <span class="num-label">Z̄(x)<br>com idade</span>
+          <div class="nb" style="color:var(--teal)">↓</div>
+          <span class="nl">Z̄(x)<br>com a idade</span>
         </div>
         <div style="text-align:center">
-          <div class="num-grande" style="color:#C0392B">↓</div>
-          <span class="num-label">µ̄(x) vs.<br>µ₀(x)</span>
+          <div class="nb" style="color:var(--coral)">↓</div>
+          <span class="nl">µ̄(x) vs.<br>µ₀(x)</span>
         </div>
         <div style="text-align:center">
-          <div class="num-grande" style="color:#2C3E50">↓</div>
-          <span class="num-label">Viés HR<br>no Cox</span>
+          <div class="nb" style="color:var(--azul)">↓</div>
+          <span class="nl">HR no Cox<br>sem Z</span>
         </div>
       </div>
-      <div class="box" style="margin-top:.7em; font-size:.8em">
+      <div class="box" style="margin-top:.5em; font-size:.76em">
         <strong>O mesmo mecanismo explica:</strong>
-        <ul class="disc" style="font-size:.92em">
+        <ul class="disc" style="font-size:.9em; margin-top:.2em">
           <li>Plateau de mortalidade em centenários</li>
-          <li>Cruzamento de curvas negro/branco EUA (slide 5)</li>
+          <li>Cruzamento negro/branco nos EUA (slide 5)</li>
           <li>Efeito Phoenix após desastres (slide 34)</li>
-          <li>Cruzamento mgus2: mulheres vs. homens</li>
-          <li>Fragilidade crescente por estágio em pbc</li>
+          <li>Z crescente por estágio no pbc (E1→E4)</li>
+          <li>Heterogeneidade entre tipos celulares no veteran</li>
         </ul>
       </div>
     </div>
     <div>
-      <div class="fig-wrap">
-        <svg viewBox="0 0 280 195" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+      <div class="fw">
+        <svg viewBox="0 0 270 195" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <marker id="arr3" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-              <path d="M0,0 L6,3 L0,6 Z" fill="#6C757D"/>
+            <marker id="a3" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+              <path d="M0,0 L5,2.5 L0,5Z" fill="#6C757D"/>
             </marker>
           </defs>
-          <line x1="30" y1="165" x2="265" y2="165" stroke="#6C757D" stroke-width="1" marker-end="url(#arr3)"/>
-          <line x1="30" y1="15"  x2="30"  y2="170" stroke="#6C757D" stroke-width="1" marker-end="url(#arr3)"/>
-          <text x="260" y="178" font-size="9" fill="#6C757D">Idade</text>
-          <text x="32"  y="13"  font-size="9" fill="#6C757D">Z̄(x)</text>
-          <!-- Linha Z=1 em y=52 (topo aproximado) -->
-          <line x1="30" y1="52" x2="265" y2="52" stroke="#6C757D" stroke-width="0.8" stroke-dasharray="3,2"/>
-          <text x="232" y="50" font-size="8" fill="#6C757D">Z̄=1 (início)</text>
+          <line x1="28" y1="160" x2="255" y2="160" stroke="#6C757D" stroke-width="1" marker-end="url(#a3)"/>
+          <line x1="28" y1="14"  x2="28"  y2="163" stroke="#6C757D" stroke-width="1" marker-end="url(#a3)"/>
+          <text x="250" y="172" font-size="9" fill="#6C757D">Idade</text>
+          <text x="30"  y="11"  font-size="9" fill="#6C757D">Z̄(x)</text>
+          <!-- Z=1 inicial em y=52 -->
+          <line x1="28" y1="52" x2="255" y2="52" stroke="#6C757D" stroke-width=".8" stroke-dasharray="3,2"/>
+          <text x="225" y="49" font-size="8" fill="#6C757D">Z̄=1</text>
           <!-- σ²=0.1 cai devagar -->
-          <polyline points="30,52 70,49 110,46 150,43 190,40 230,38 260,36"
-                    fill="none" stroke="#2C3E50" stroke-width="2"/>
-          <text x="262" y="38" font-size="8" fill="#2C3E50">σ²=0,1</text>
+          <polyline points="28,52 68,49 108,47 148,44 188,42 228,40 252,38"
+            fill="none" stroke="#2C3E50" stroke-width="2"/>
+          <text x="254" y="40" font-size="8" fill="#2C3E50">σ²=0,1</text>
           <!-- σ²=0.5 -->
-          <polyline points="30,52 70,45 110,38 150,32 190,27 230,23 260,21"
-                    fill="none" stroke="#1A7F6E" stroke-width="2"/>
-          <text x="262" y="23" font-size="8" fill="#1A7F6E">σ²=0,5</text>
+          <polyline points="28,52 68,44 108,37 148,31 188,26 228,22 252,20"
+            fill="none" stroke="#1A7F6E" stroke-width="2"/>
+          <text x="254" y="22" font-size="8" fill="#1A7F6E">0,5</text>
           <!-- σ²=1.0 -->
-          <polyline points="30,52 70,40 110,30 150,22 190,16 230,12 260,10"
-                    fill="none" stroke="#D4A843" stroke-width="2"/>
-          <text x="210" y="9" font-size="8" fill="#9A7420">σ²=1,0</text>
-          <!-- σ²=1.5 quase chega a 0 -->
-          <polyline points="30,52 70,36 110,24 150,14 190,8 230,5 260,4"
-                    fill="none" stroke="#C0392B" stroke-width="2"/>
-          <text x="174" y="4" font-size="8" fill="#C0392B">σ²=1,5</text>
-          <!-- Eixo x -->
-          <text x="28"  y="178" font-size="8" fill="#6C757D">40</text>
-          <text x="108" y="178" font-size="8" fill="#6C757D">70</text>
-          <text x="188" y="178" font-size="8" fill="#6C757D">85</text>
-          <text x="248" y="178" font-size="8" fill="#6C757D">100</text>
-          <!-- Eixo y -->
-          <text x="14" y="56"  font-size="8" fill="#6C757D">1,0</text>
-          <text x="14" y="116" font-size="8" fill="#6C757D">0,5</text>
-          <text x="14" y="166" font-size="8" fill="#6C757D">0,0</text>
+          <polyline points="28,52 68,38 108,28 148,19 188,13 228,9 252,7"
+            fill="none" stroke="#D4A843" stroke-width="2"/>
+          <text x="218" y="6" font-size="8" fill="#9A7420">1,0</text>
+          <!-- σ²=1.5 quase 0 -->
+          <polyline points="28,52 68,33 108,20 148,11 188,6 228,4 252,3"
+            fill="none" stroke="#C0392B" stroke-width="2"/>
+          <text x="172" y="3" font-size="8" fill="#C0392B">1,5</text>
+          <!-- eixo x -->
+          <text x="26"  y="172" font-size="8" fill="#6C757D">40</text>
+          <text x="106" y="172" font-size="8" fill="#6C757D">70</text>
+          <text x="186" y="172" font-size="8" fill="#6C757D">85</text>
+          <text x="246" y="172" font-size="8" fill="#6C757D">100</text>
+          <!-- eixo y -->
+          <text x="10" y="56"  font-size="8" fill="#6C757D">1,0</text>
+          <text x="10" y="106" font-size="8" fill="#6C757D">0,5</text>
+          <text x="10" y="162" font-size="8" fill="#6C757D">0,0</text>
         </svg>
-        <p class="fig-cap">Z̄(x) = 1/[1 + σ²·Λ₀(x)] com µ₀(x) = 0,0001·e<sup>0,09x</sup><br>
-        Quanto maior σ², mais rápida a seleção — menos frágeis os sobreviventes.</p>
+        <p class="fc">Z̄(x) = 1/[1+σ²·Λ₀(x)] · µ₀(x) = 0,0001·e<sup>0,09x</sup><br>
+        Maior σ² → seleção mais rápida → sobreviventes mais robustos</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════════════════════
-     SLIDE 13 — REFERÊNCIAS
-════════════════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════
+     13 — REFERÊNCIAS
+═══════════════════════════════════════════════════ -->
 <section>
-  <h2>Referências principais</h2>
-  <div class="cols cols-2" style="font-size:.73em; line-height:1.7">
+  <h2>Referências</h2>
+  <div class="g2" style="font-size:.74em; line-height:1.65">
     <div>
       <h3>Fragilidade</h3>
       <ul class="disc">
-        <li>Vaupel, Manton & Stallard (1979). <em>Demography</em> 16(3)</li>
-        <li>Vaupel & Yashin (1985). <em>Am. Statistician</em> 39(3)</li>
-        <li>Vaupel & Yashin (1987). <em>Demography</em> 24(1) [ressuscitação]</li>
-        <li>Vaupel, Yashin & Manton (1988). <em>Math. Pop. Studies</em> 1(1)</li>
-        <li>Elbers & Ridder (1982). <em>Rev. Econ. Studies</em> 49(3)</li>
+        <li>Vaupel, Manton &amp; Stallard (1979). <em>Demography</em> 16(3)</li>
+        <li>Vaupel &amp; Yashin (1985). <em>Am. Statistician</em> 39(3)</li>
+        <li>Vaupel &amp; Yashin (1987). <em>Demography</em> 24(1)</li>
+        <li>Vaupel, Yashin &amp; Manton (1988). <em>Math. Pop. Studies</em> 1(1)</li>
+        <li>Elbers &amp; Ridder (1982). <em>Rev. Econ. Studies</em> 49(3)</li>
         <li>Wienke (2003). MPIDR WP 2003-032</li>
-        <li>Duchateau & Janssen (2008). <em>The Frailty Model</em>. Springer</li>
+        <li>Duchateau &amp; Janssen (2008). <em>The Frailty Model</em>. Springer</li>
       </ul>
     </div>
     <div>
-      <h3>Riscos competitivos & datasets</h3>
+      <h3>Riscos competitivos &amp; datasets</h3>
       <ul class="disc">
-        <li>Fine & Gray (1999). <em>JASA</em> 94(446):496–509</li>
+        <li>Fine &amp; Gray (1999). <em>JASA</em> 94(446):496–509</li>
         <li>Beyersmann et al. (2012). <em>Competing Risks in R</em>. Springer</li>
-        <li>Kyle et al. (2002). <em>NEJM</em> 346(8):564–569 [mgus2]</li>
-        <li>Fleming & Harrington (1991). <em>Counting Processes</em>. Wiley [pbc]</li>
-        <li>Kalbfleisch & Prentice (1980). <em>Failure Time Data</em>. Wiley [veteran]</li>
+        <li>Kyle et al. (2002). <em>NEJM</em> 346(8) [mgus2]</li>
+        <li>Fleming &amp; Harrington (1991). <em>Counting Processes</em>. Wiley [pbc]</li>
+        <li>Kalbfleisch &amp; Prentice (1980). <em>Failure Time Data</em>. Wiley [veteran]</li>
       </ul>
-      <div class="box-azul box" style="margin-top:.6em; font-size:.9em">
-        <strong>Código & dados</strong><br>
+      <div class="box-azul box" style="margin-top:.5em">
+        <strong>Código &amp; dados</strong><br>
         <code>github.com/vdilego/lab_fragilidade</code><br>
-        Datasets: <code>survival::mgus2</code> · <code>survival::pbc</code> · <code>survival::veteran</code>
+        <code>survival::mgus2 · survival::pbc · survival::veteran</code>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════════════════════
-     SLIDE 14 — ENCERRAMENTO
-════════════════════════════════════════════════════════════════════ -->
-<section class="titulo-slide" data-background-color="#1E2B38">
-  <h1 style="font-size:1.4em; line-height:1.4">
-    "Os mais frágeis morrem primeiro.<br>
-    O grupo sobrevivente torna-se progressivamente<br>
-    mais robusto — e a taxa observada parece<br>
-    menor do que a taxa individual."
-  </h1>
-  <p class="sub" style="margin-top:1em">Vaupel & Yashin (1985) · <em>Heterogeneity's Ruses</em></p>
-  <br>
-  <h3>Obrigada!</h3>
-  <p style="color:#BDC3C7">
-    Prof. Vanessa Di Lego · CEDEPLAR/UFMG<br>
-    <code style="background:rgba(255,255,255,.1);color:#A8C7B8">vdilego.github.io</code>
-  </p>
+<!-- ═══════════════════════════════════════════════════
+     14 — ENCERRAMENTO
+═══════════════════════════════════════════════════ -->
+<section class="titulo" data-background-color="#1E2B38">
+  <div style="padding-top:1.2em">
+    <h1 style="font-size:1.4em; line-height:1.45; color:#ECF0F1 !important">
+      "Os mais frágeis morrem primeiro.<br>
+      O grupo sobrevivente torna-se progressivamente<br>
+      mais robusto — e a taxa observada parece<br>
+      menor do que a taxa individual."
+    </h1>
+    <p class="sub" style="margin-top:.8em">
+      Vaupel &amp; Yashin (1985) · <em>Heterogeneity's Ruses</em>
+    </p>
+    <br>
+    <h3>Obrigada!</h3>
+    <p style="color:#BDC3C7; font-size:.75em">
+      Prof. Vanessa Di Lego · CEDEPLAR/UFMG<br>
+      <code style="background:rgba(255,255,255,.1);color:#A8C7B8">vdilego.github.io</code>
+    </p>
+  </div>
 </section>
 
 </div><!-- .slides -->
@@ -883,9 +1211,11 @@ Reveal.initialize({
   controls: true,
   progress: true,
   center: false,
-  width: 1100,
-  height: 680,
-  margin: 0.04,
+  width: 1080,
+  height: 700,
+  margin: 0.03,
+  minScale: 0.2,
+  maxScale: 2.0,
   plugins: []
 });
 </script>
