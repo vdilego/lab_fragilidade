@@ -46,7 +46,7 @@ theme_set(theme_demog)
 
 set.seed(2026)  # reprodutibilidade
 
-
+# mudar funcao acima.
 ## ----------------------------------------------------------------------------
 ## 1.2  Simulação: população heterogênea com fragilidade gama
 ## ----------------------------------------------------------------------------
