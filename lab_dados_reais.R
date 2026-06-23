@@ -49,7 +49,8 @@ theme_set(theme_demog)
 ##   Fonte: Kyle RA et al. (2002) NEJM 346(8):564-569.
 ##          Disponível em survival::mgus2 (n=1384, Mayo Clinic, 1960-1994).
 
-data(mgus2)
+mgus2   <- survival::mgus2 
+
 
 cat("╔══════════════════════════════════════════════════════╗\n")
 cat("║  DATASET: mgus2 — Gamopatia Monoclonal (Mayo Clinic) ║\n")
@@ -181,6 +182,8 @@ fig5_1 <- ggplot() +
     )
   )
 
+fig5_1
+
 ## --- Figura 5.2: CIF completa — dois desfechos empilhados ---
 fig5_2 <- df_cif %>%
   select(time, sexo, cif_prog, cif_morte) %>%
@@ -214,6 +217,7 @@ fig5_2 <- df_cif %>%
     caption  = "CIF₁(t) + CIF₂(t) + S(t) = 1 para cada grupo. Estimativa via survfit(factor(event))."
   )
 
+fig5_2
 print(fig5_1 / fig5_2)
 
 ## Verificação numérica: soma deve ser 1
@@ -339,8 +343,8 @@ fig5_3 <- df_pred %>%
   ggplot(aes(x = time, y = cif, color = perfil)) +
   geom_step(linewidth = 1.1) +
   scale_color_manual(values = c("#3C5488", "#E64B35"), name = NULL) +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1),
-                     limits = c(0, 0.25)) +
+ # scale_y_continuous(labels = scales::percent_format(accuracy = 1),
+#                     limits = c(0, 0.25)) +
   scale_x_continuous(breaks = seq(0, 30, 5)) +
   labs(
     title    = "Figura 5.3 — CIF de progressão ajustada: efeito do M-spike",
@@ -367,7 +371,7 @@ print(fig5_3)
 ##   Referência: Fleming TR, Harrington DP (1991). Counting Processes and
 ##               Survival Analysis. Wiley.
 
-data(pbc)
+pbc     <- survival::pbc 
 pbc_ens <- pbc %>%
   filter(!is.na(trt)) %>%                    # apenas ensaio (n=312)
   mutate(
@@ -524,7 +528,7 @@ print(fig5_4)
 ##   Referência: Kalbfleisch JD, Prentice RL (1980). The Statistical Analysis
 ##               of Failure Time Data. Wiley.
 
-data(veteran)
+veteran <- survival::veteran
 
 cat("\n╔══════════════════════════════════════════════════════╗\n")
 cat("║  DATASET: veteran — Câncer de Pulmão VA (n=137)      ║\n")
