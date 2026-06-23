@@ -528,6 +528,7 @@ print(fig5_4)
 ##   Referência: Kalbfleisch JD, Prentice RL (1980). The Statistical Analysis
 ##               of Failure Time Data. Wiley.
 
+## veteran é alias interno de "cancer" — mesmo problema do mgus2:
 veteran <- survival::veteran
 
 cat("\n╔══════════════════════════════════════════════════════╗\n")
@@ -568,6 +569,10 @@ cox_vet_frail <- coxph(
   data = veteran
 )
 
+## Fragilidades: coeficientes com prefixo "gamma:" precisam ser extraídos
+## ANTES da tabela de HRs, pois são usados para excluir esses índices via [-gamma_idx_vet]
+gamma_idx_vet <- grep("^gamma:", names(coef(cox_vet_frail)))
+
 cat("\n=== Comparação de HRs: efeito fixo vs. fragilidade (veteran) ===\n\n")
 
 tab_vet <- tibble(
@@ -577,9 +582,8 @@ tab_vet <- tibble(
 )
 print(tab_vet)
 
-## Fragilidades por tipo celular (estão nos coef com prefixo "gamma:")
+## Fragilidades por tipo celular
 cat("\nFragilidades estimadas (exp do efeito aleatório):\n")
-gamma_idx_vet <- grep("^gamma:", names(coef(cox_vet_frail)))
 z_celltype    <- exp(coef(cox_vet_frail)[gamma_idx_vet])
 names(z_celltype) <- levels(veteran$celltype)
 print(round(z_celltype, 3))
